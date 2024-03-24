@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import "@/style/antd.scss"
 import React from "react";
-import App from "./index"
+import MenuContainer from "./index"
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "图床",
@@ -19,9 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <App>
+      <MenuContainer>
           {children}
-      </App>
+      </MenuContainer>
       </body>
     </html>
   );

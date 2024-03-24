@@ -1,8 +1,8 @@
 "use client";
-import React, {useEffect, useState} from 'react';
+import React, {FormEventHandler, useEffect, useState} from 'react';
 import {UploadOutlined} from '@ant-design/icons';
 import type {GetProp, UploadFile, UploadProps} from 'antd';
-import {Button, Image, message, Modal, Upload} from 'antd';
+import {Button, Flex, Image, message, Modal, Upload} from 'antd';
 import BedNameRadio from "@/components/bedNameRadio";
 import {compressFile} from "@/utils/compressionFile";
 import {PageContainer} from "@ant-design/pro-components";
@@ -16,13 +16,29 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onload = () => resolve(reader.result as string);
         reader.onerror = (error) => reject(error);
     });
+import {Slider} from 'antd';
+
+const IntegerStep  : React.FC<{  inputValue: number;
+    onChange: (newValue: number) => void;}>= ({inputValue, onChange}) => {
+
+    return (
+        <Slider className={'w-32 ml-5'}
+            tooltip={{formatter: (value) => `图片质量：${value}`}}
+            min={1}
+            max={10}
+            onChange={onChange}
+            value={inputValue}
+        />
+    );
+};
 
 const App: React.FC = () => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
-    const [fileList, setFileList] = useState<UploadFile[]>([
-    ]);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [inputValue, setInputValue] = useState<number>(5);
+
     const handleCancel = () => setPreviewOpen(false);
 
     const handlePreview = async (file: UploadFile) => {
@@ -37,39 +53,34 @@ const App: React.FC = () => {
     };
 
 
-    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>{
-        // newFileList.forEach(async (item)=>{
-        //     console.log('处理',item)
-        //     if (item.percent===0){
-        //     }
-        // })
+    const handleChange: UploadProps['onChange'] = ({fileList: newFileList}) => {
         setFileList(newFileList);
 
     }
     // 图片压缩
-    const beforeUpload= async (file:File) => {
-        return await compressFile(file, 'image/jpeg')
+    const beforeUpload = async (file: File) => {
+        return await compressFile(file, 'image/jpeg',inputValue/10)
     }
 
     const showUploadList = {
-            showDownloadIcon: true,
-            downloadIcon: 'copy',
+        showDownloadIcon: true,
+        downloadIcon: 'copy',
     }
-    const onDownload = (file:UploadFile)=>{
-        if (file.response.code===200){
+    const onDownload = (file: UploadFile) => {
+        if (file.response.code === 200) {
             navigator.clipboard.writeText(file.response.data.url).then();
             message.success('复制图片地址成功').then();
         }
     }
-    const [bedType, setBedType]= useState('');
-    useEffect(()=>{
+    const [bedType, setBedType] = useState('');
+    useEffect(() => {
         setBedType(process.env["NEXT_PUBLIC_DEFAULT_BED"])
-    },[])
+    }, [])
     return (
         <>
             <PageContainer
                 extra={
-                    <BedNameRadio bedType={bedType} onChange={(e)=>setBedType((e.target as HTMLInputElement).value)}/>
+                    <BedNameRadio bedType={bedType} onChange={(e) => setBedType((e.target as HTMLInputElement).value)}/>
                 }
             >
                 <Upload
@@ -83,16 +94,20 @@ const App: React.FC = () => {
                     fileList={fileList}
                     onPreview={handlePreview}
                     onChange={handleChange}
-                    data={{bedType:bedType}}
+                    data={{bedType: bedType}}
                 >
-                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    <Flex>
+
+                        <Button icon={<UploadOutlined/>}>Upload</Button>
+                        <IntegerStep inputValue={inputValue} onChange={(e:number)=>setInputValue(e)}/>
+                    </Flex>
+
                 </Upload>
             </PageContainer>
 
 
-
             <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                <Image alt="example" style={{ width: '100%' }} src={previewImage} />
+                <Image alt="example" style={{width: '100%'}} src={previewImage}/>
             </Modal>
         </>
     );
