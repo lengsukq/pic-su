@@ -1,0 +1,14 @@
+.ant-upload-list.ant-upload-list-picture{
+  display: flex;
+  .ant-upload-list-item-container{
+    flex: 1; /* 让每个项目平均分配剩余空间 */
+    max-width: calc(50% - 5px);
+  }
+  .ant-upload-list-item-container + .ant-upload-list-item-container {
+    margin-left: 10px; /* 设置项目之间的间距 */
+
+  }
+  .ant-upload-list-item {
+
+}
+}

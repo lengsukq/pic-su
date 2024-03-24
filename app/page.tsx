@@ -1,10 +1,11 @@
 "use client";
 import React, {useEffect, useState} from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import {Modal, Upload, Button, Card, Image, message} from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import type { GetProp, UploadFile, UploadProps } from 'antd';
+import {PlusOutlined, UploadOutlined} from '@ant-design/icons';
+import type {GetProp, UploadFile, UploadProps} from 'antd';
+import {Button, message, Modal, Upload} from 'antd';
 import BedNameRadio from "@/components/bedNameRadio";
+import {compressFile} from "@/utils/compressionFile";
+
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 const getBase64 = (file: FileType): Promise<string> =>
@@ -36,13 +37,18 @@ const App: React.FC = () => {
 
 
     const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>{
-        newFileList.forEach((item)=>{
-            console.log('处理',item)
-        })
+        // newFileList.forEach(async (item)=>{
+        //     console.log('处理',item)
+        //     if (item.percent===0){
+        //     }
+        // })
         setFileList(newFileList);
 
     }
-
+    // 图片压缩
+    const beforeUpload= async (file:File) => {
+        return await compressFile(file, 'image/jpeg')
+    }
 
     const uploadButton = (
 
@@ -69,6 +75,7 @@ const App: React.FC = () => {
         <>
             <BedNameRadio bedType={bedType} onChange={(e)=>setBedType((e.target as HTMLInputElement).value)}/>
             <Upload
+                beforeUpload={beforeUpload}
                 onDownload={onDownload}
                 showUploadList={showUploadList}
                 className="upload-list-inline"
