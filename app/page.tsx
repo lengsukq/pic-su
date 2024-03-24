@@ -2,11 +2,10 @@
 import React, {useEffect, useState} from 'react';
 import {UploadOutlined} from '@ant-design/icons';
 import type {GetProp, UploadFile, UploadProps} from 'antd';
-import {Button, message, Modal, Upload} from 'antd';
+import {Button, Image, message, Modal, Upload} from 'antd';
 import BedNameRadio from "@/components/bedNameRadio";
 import {compressFile} from "@/utils/compressionFile";
 import {PageContainer} from "@ant-design/pro-components";
-import Image from "next/image";
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -93,7 +92,6 @@ const App: React.FC = () => {
 
 
             <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-
                 <Image alt="example" style={{ width: '100%' }} src={previewImage} />
             </Modal>
         </>
