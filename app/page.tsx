@@ -63,8 +63,8 @@ const App: React.FC = () => {
     }
     const onDownload = (file:UploadFile)=>{
         if (file.response.code===200){
-            navigator.clipboard.writeText(file.response.data.url);
-            message.success('复制图片地址成功');
+            navigator.clipboard.writeText(file.response.data.url).then();
+            message.success('复制图片地址成功').then();
         }
     }
     const [bedType, setBedType]= useState('');

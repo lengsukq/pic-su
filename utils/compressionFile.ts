@@ -1,9 +1,7 @@
-import { UploadFile } from 'antd';
-
 const fileToDataURL = (file: Blob): Promise<string> => {
     return new Promise((resolve) => {
         const reader = new FileReader();
-        reader.onloadend = (e) => resolve(reader.result as string);
+        reader.onloadend = () => resolve(reader.result as string);
         reader.readAsDataURL(file);
     });
 };
