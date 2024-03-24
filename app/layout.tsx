@@ -1,9 +1,11 @@
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "@/style/antd.scss"
+import React from "react";
+import App from "./index"
 const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "图床",
   description: "图床管理",
@@ -16,7 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+      <App>
+          {children}
+      </App>
+      </body>
     </html>
   );
 }

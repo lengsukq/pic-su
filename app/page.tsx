@@ -1,10 +1,12 @@
 "use client";
 import React, {useEffect, useState} from 'react';
-import {PlusOutlined, UploadOutlined} from '@ant-design/icons';
+import {UploadOutlined} from '@ant-design/icons';
 import type {GetProp, UploadFile, UploadProps} from 'antd';
 import {Button, message, Modal, Upload} from 'antd';
 import BedNameRadio from "@/components/bedNameRadio";
 import {compressFile} from "@/utils/compressionFile";
+import {PageContainer} from "@ant-design/pro-components";
+import Image from "next/image";
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -50,13 +52,6 @@ const App: React.FC = () => {
         return await compressFile(file, 'image/jpeg')
     }
 
-    const uploadButton = (
-
-        <button style={{ border: 0, background: 'none' }} type="button">
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </button>
-    );
     const showUploadList = {
             showDownloadIcon: true,
             downloadIcon: 'copy',
@@ -73,26 +68,33 @@ const App: React.FC = () => {
     },[])
     return (
         <>
-            <BedNameRadio bedType={bedType} onChange={(e)=>setBedType((e.target as HTMLInputElement).value)}/>
-            <Upload
-                beforeUpload={beforeUpload}
-                onDownload={onDownload}
-                showUploadList={showUploadList}
-                className="upload-list-inline"
-                accept=".png, .jpg, .jpeg"
-                action="/api/image-api"
-                listType="picture"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-                data={{bedType:bedType}}
+            <PageContainer
+                extra={
+                    <BedNameRadio bedType={bedType} onChange={(e)=>setBedType((e.target as HTMLInputElement).value)}/>
+                }
             >
-                <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
+                <Upload
+                    beforeUpload={beforeUpload}
+                    onDownload={onDownload}
+                    showUploadList={showUploadList}
+                    className="upload-list-inline"
+                    accept=".png, .jpg, .jpeg"
+                    action="/api/image-api"
+                    listType="picture"
+                    fileList={fileList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
+                    data={{bedType:bedType}}
+                >
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                </Upload>
+            </PageContainer>
+
+
 
             <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
 
-                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                <Image alt="example" style={{ width: '100%' }} src={previewImage} />
             </Modal>
         </>
     );
