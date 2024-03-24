@@ -12,3 +12,9 @@
 
 }
 }
+@media screen and (max-width: 480px) {
+  .ant-pro-page-container-children-container, .ant-pro-page-container-warp-page-header{
+    padding-inline: 0!important;
+  }
+
+}
