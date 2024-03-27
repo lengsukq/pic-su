@@ -1,5 +1,5 @@
 "use client";
-import React, {FormEventHandler, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {UploadOutlined} from '@ant-design/icons';
 import type {GetProp, UploadFile, UploadProps} from 'antd';
 import {Button, Flex, Image, message, Modal, Upload} from 'antd';
