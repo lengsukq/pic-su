@@ -1,61 +1,40 @@
 'use client'
 import {
-    AlipayCircleOutlined,
     LockOutlined,
     MobileOutlined,
-    TaobaoCircleOutlined,
     UserOutlined,
-    WeiboCircleOutlined,
 } from '@ant-design/icons';
 import {
     LoginForm,
     ProConfigProvider,
     ProFormCaptcha,
-    ProFormCheckbox,
     ProFormText,
-    setAlpha,
 } from '@ant-design/pro-components';
-import { Space, Tabs, message, theme } from 'antd';
-import type { CSSProperties, FormEventHandler } from 'react';
+import { Tabs, message, theme } from 'antd';
 import React, { useState } from 'react';
-import { Button, Modal } from 'antd';
-type LoginType = 'phone' | 'account';
+import { Modal } from 'antd';
+type LoginType = 'register' | 'account';
 
 const Login = () => {
     const { token } = theme.useToken();
-    const [loginType, setLoginType] = useState<LoginType>('phone');
+    const [loginType, setLoginType] = useState<LoginType>('account');
 
-    const iconStyles: CSSProperties = {
-        marginInlineStart: '16px',
-        color: setAlpha(token.colorTextBase, 0.2),
-        fontSize: '24px',
-        verticalAlign: 'middle',
-        cursor: 'pointer',
-    };
 
     return (
         <ProConfigProvider hashed={false}>
             <div style={{ backgroundColor: token.colorBgContainer }}>
                 <LoginForm
                     logo="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
-                    title="Github"
-                    subTitle="全球最大的代码托管平台"
-                    actions={
-                        <Space>
-                            其他登录方式
-                            <AlipayCircleOutlined style={iconStyles} />
-                            <TaobaoCircleOutlined style={iconStyles} />
-                            <WeiboCircleOutlined style={iconStyles} />
-                        </Space>
-                    }
+                    title="Pic-Su"
+                    subTitle="一站式图片管理平台"
                 >
                     <Tabs
                         centered
                         activeKey={loginType}
                         onChange={(activeKey) => setLoginType(activeKey as LoginType)}
                     >
-                        <Tabs.TabPane key={'account'} tab={'账号密码登录'} />
-                        <Tabs.TabPane key={'phone'} tab={'手机号登录'} />
+                        <Tabs.TabPane key={'account'} tab={'登录'} />
+                        <Tabs.TabPane key={'register'} tab={'注册'} />
                     </Tabs>
                     {loginType === 'account' && (
                         <>
@@ -120,7 +99,7 @@ const Login = () => {
                             />
                         </>
                     )}
-                    {loginType === 'phone' && (
+                    {loginType === 'register' && (
                         <>
                             <ProFormText
                                 fieldProps={{
@@ -151,7 +130,7 @@ const Login = () => {
                                 placeholder={'请输入验证码'}
                                 captchaTextRender={(timing, count) => {
                                     if (timing) {
-                                        return `${count} ${'获取验证码'}`;
+                                        return `${count} 获取验证码`;
                                     }
                                     return '获取验证码';
                                 }}
@@ -168,22 +147,6 @@ const Login = () => {
                             />
                         </>
                     )}
-                    <div
-                        style={{
-                            marginBlockEnd: 24,
-                        }}
-                    >
-                        <ProFormCheckbox noStyle name="autoLogin">
-                            自动登录
-                        </ProFormCheckbox>
-                        <a
-                            style={{
-                                float: 'right',
-                            }}
-                        >
-                            忘记密码
-                        </a>
-                    </div>
                 </LoginForm>
             </div>
         </ProConfigProvider>
@@ -196,12 +159,7 @@ const UserLogin: React.FC<{
     openLogin: boolean,
     onChange:Function
 }> = ({openLogin,onChange}) => {
-    const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-
-    const showModal = () => {
-        onChange(true);
-    };
 
     const handleOk = () => {
         setConfirmLoading(true);
@@ -218,11 +176,9 @@ const UserLogin: React.FC<{
 
     return (
         <>
-            <Button type="primary" onClick={showModal}>
-                Open Modal with async logic
-            </Button>
             <Modal
-                title="Title"
+                footer={null}
+                title=""
                 open={openLogin}
                 onOk={handleOk}
                 confirmLoading={confirmLoading}
