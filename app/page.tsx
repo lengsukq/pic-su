@@ -6,7 +6,6 @@ import {Button, Flex, Image, message, Modal, Upload} from 'antd';
 import BedNameRadio from "@/components/bedNameRadio";
 import {compressFile} from "@/utils/compressionFile";
 import {PageContainer} from "@ant-design/pro-components";
-
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 const getBase64 = (file: FileType): Promise<string> =>
@@ -22,7 +21,7 @@ const IntegerStep  : React.FC<{  inputValue: number;
     onChange: (newValue: number) => void;}>= ({inputValue, onChange}) => {
 
     return (
-        <Slider className={'w-32 ml-5'}
+        <Slider className={'w-32'}
             tooltip={{formatter: (value) => `图片质量：${value}`}}
             min={1}
             max={10}
@@ -83,6 +82,8 @@ const App: React.FC = () => {
                     <BedNameRadio bedType={bedType} onChange={(e) => setBedType((e.target as HTMLInputElement).value)}/>
                 }
             >
+                <IntegerStep inputValue={inputValue} onChange={(e:number)=>setInputValue(e)}/>
+
                 <Upload
                     beforeUpload={beforeUpload}
                     onDownload={onDownload}
@@ -99,7 +100,6 @@ const App: React.FC = () => {
                     <Flex>
 
                         <Button icon={<UploadOutlined/>}>Upload</Button>
-                        <IntegerStep inputValue={inputValue} onChange={(e:number)=>setInputValue(e)}/>
                     </Flex>
 
                 </Upload>

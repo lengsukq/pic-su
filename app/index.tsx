@@ -3,6 +3,7 @@ import {
     CrownOutlined, InfoCircleOutlined, MergeCellsOutlined, QuestionCircleOutlined,
     TabletOutlined, UserOutlined,
 } from '@ant-design/icons';
+import UserLogin from "@/components/userLogin"
 
 const ProLayout = dynamic(
     () => import("@ant-design/pro-components").then((com) => com.ProLayout),
@@ -13,7 +14,12 @@ import dynamic from "next/dynamic";
 
 export default function MenuContainer({children}: Readonly<{ children: React.ReactNode; }>) {
     const [pathname, setPathname] = useState('/welcome');
+    const [openLogin, setOpenLogin] = useState(false);
+
     return (
+        <>
+        <UserLogin openLogin={openLogin} onChange={(e: boolean)=>setOpenLogin(e)}/>
+
         <div
             id="test-pro-layout"
             style={{
@@ -81,6 +87,9 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                     icon: <UserOutlined/>,
                     size: 'small',
                     title: '七妮妮',
+                    onClick: () => {
+                        setOpenLogin(true)
+                    },
                 }}
                 actionsRender={() => [
                     <InfoCircleOutlined key="InfoCircleOutlined"/>,
@@ -115,5 +124,7 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                 {children}
             </ProLayout>
         </div>
+        </>
+
     );
 };
