@@ -14,12 +14,14 @@
     "@emotion/css": "^11.11.2",
     "antd": "^5.15.3",
     "next": "^14.1.4",
+    "pg": "^8.11.5",
     "react": "^18",
     "react-dom": "^18",
     "sass": "^1.72.0"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pg": "^8.11.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
