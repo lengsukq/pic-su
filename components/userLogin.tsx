@@ -38,7 +38,7 @@ const Login = () => {
             <div style={{ backgroundColor: token.colorBgContainer }}>
                 <LoginForm
                     onFinish={loginType==='account'?login:register}
-                    logo="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
+                    logo="https://i.ibb.co/bKN1t8J/b-39d762806a8d59b0015a4c98927abaf8.jpg"
                     title="Pic-Su"
                     subTitle="一站式图片管理平台"
                     submitter={{ searchConfig: { submitText: loginType==='account'?'登录': '注册', }}}
