@@ -5,8 +5,8 @@ export async function POST(req:Request) {
     console.log('进入')
     try {
         const jsonData = await req.json();
-        const {username, hashedPassword, email} = jsonData;
-        console.log('{username, hashedPassword, email}',username, hashedPassword, email)
+        const {username, password, email} = jsonData;
+        console.log('{username, password, email}',username, password, email)
         // 创建用户
         // 检查用户名或邮箱是否已被占用
         const existingUser = await query('SELECT id FROM users WHERE username = $1 OR email = $2', [username, email]);
@@ -17,7 +17,7 @@ export async function POST(req:Request) {
         }
         const result = await query(
             'INSERT INTO users(username, password, email, created_at, updated_at) VALUES($1, $2, $3, NOW(), NOW()) RETURNING id',
-            [username, hashedPassword, email]
+            [username, password, email]
         );
 
         return Response.json(BizResult.success('', '创建账号成功'))

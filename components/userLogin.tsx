@@ -7,26 +7,41 @@ import {
 import {
     LoginForm,
     ProConfigProvider,
-    ProFormCaptcha,
     ProFormText,
 } from '@ant-design/pro-components';
 import { Tabs, message, theme } from 'antd';
 import React, { useState } from 'react';
 import { Modal } from 'antd';
+import {loginApi, userRegister} from "@/utils/client/apihttp";
 type LoginType = 'register' | 'account';
 
 const Login = () => {
     const { token } = theme.useToken();
     const [loginType, setLoginType] = useState<LoginType>('account');
-
+    const login = async (val:any)=>{
+        loginApi(val).then((res)=>{
+            if (res.code===200){
+                message.success(res.msg);
+            }
+        })
+    }
+    const register =async (val:any)=>{
+        userRegister(val).then((res)=>{
+            if (res.code===200){
+                message.success(res.msg);
+            }
+        })
+    }
 
     return (
         <ProConfigProvider hashed={false}>
             <div style={{ backgroundColor: token.colorBgContainer }}>
                 <LoginForm
+                    onFinish={loginType==='account'?login:register}
                     logo="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
                     title="Pic-Su"
                     subTitle="一站式图片管理平台"
+                    submitter={{ searchConfig: { submitText: loginType==='account'?'登录': '注册', }}}
                 >
                     <Tabs
                         centered
@@ -106,44 +121,46 @@ const Login = () => {
                                     size: 'large',
                                     prefix: <MobileOutlined className={'prefixIcon'} />,
                                 }}
-                                name="mobile"
-                                placeholder={'手机号'}
+                                name="username"
+                                placeholder={'用户名'}
                                 rules={[
                                     {
                                         required: true,
-                                        message: '请输入手机号！',
-                                    },
-                                    {
-                                        pattern: /^1\d{10}$/,
-                                        message: '手机号格式错误！',
+                                        message: '请输入用户名！',
                                     },
                                 ]}
                             />
-                            <ProFormCaptcha
+                            <ProFormText
                                 fieldProps={{
                                     size: 'large',
-                                    prefix: <LockOutlined className={'prefixIcon'} />,
+                                    prefix: <MobileOutlined className={'prefixIcon'} />,
                                 }}
-                                captchaProps={{
-                                    size: 'large',
-                                }}
-                                placeholder={'请输入验证码'}
-                                captchaTextRender={(timing, count) => {
-                                    if (timing) {
-                                        return `${count} 获取验证码`;
-                                    }
-                                    return '获取验证码';
-                                }}
-                                name="captcha"
+                                name="email"
+                                placeholder={'邮箱'}
                                 rules={[
                                     {
                                         required: true,
-                                        message: '请输入验证码！',
+                                        message: '请输入邮箱！',
+                                    },
+                                    {
+                                        pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,6}$/,
+                                        message: '邮箱格式错误！',
                                     },
                                 ]}
-                                onGetCaptcha={async () => {
-                                    message.success('获取验证码成功！验证码为：1234');
+                            />
+                            <ProFormText.Password
+                                fieldProps={{
+                                    size: 'large',
+                                    prefix: <MobileOutlined className={'prefixIcon'} />,
                                 }}
+                                name="password"
+                                placeholder={'密码'}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请输入密码！',
+                                    },
+                                ]}
                             />
                         </>
                     )}
