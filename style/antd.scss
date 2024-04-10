@@ -1,12 +1,12 @@
 .ant-upload-list.ant-upload-list-picture{
   display: flex;
+  flex-wrap: wrap;
   .ant-upload-list-item-container{
-    flex: 1; /* 让每个项目平均分配剩余空间 */
-    max-width: calc(50% - 5px);
+    width: calc(50% - 5px);
   }
-  .ant-upload-list-item-container + .ant-upload-list-item-container {
-    margin-left: 10px; /* 设置项目之间的间距 */
-
+  /* odd 这个关键词意味着“奇数”，所以这个规则会选中父元素下的第1个、第3个、第5个等奇数位置的 .ant-upload-list-item-container 子元素。 */
+  .ant-upload-list-item-container:nth-child(odd) {
+    margin-right: 10px;
   }
   .ant-upload-list-item {
 

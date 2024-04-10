@@ -98,7 +98,6 @@ const App: React.FC = () => {
                     data={{bedType: bedType}}
                 >
                     <Flex>
-
                         <Button icon={<UploadOutlined/>}>Upload</Button>
                     </Flex>
 
