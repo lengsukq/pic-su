@@ -1,7 +1,7 @@
 'use client'
 import {
     LockOutlined,
-    MobileOutlined,
+    MailOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 import {
@@ -63,7 +63,7 @@ const Login = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: '请输入用户名!',
+                                        message: '请输入用户名或邮箱!',
                                     },
                                 ]}
                             />
@@ -88,7 +88,7 @@ const Login = () => {
                             <ProFormText
                                 fieldProps={{
                                     size: 'large',
-                                    prefix: <MobileOutlined className={'prefixIcon'} />,
+                                    prefix: <UserOutlined className={'prefixIcon'} />,
                                 }}
                                 name="username"
                                 placeholder={'用户名'}
@@ -102,7 +102,7 @@ const Login = () => {
                             <ProFormText
                                 fieldProps={{
                                     size: 'large',
-                                    prefix: <MobileOutlined className={'prefixIcon'} />,
+                                    prefix: <MailOutlined className={'prefixIcon'} />,
                                 }}
                                 name="email"
                                 placeholder={'邮箱'}
@@ -120,7 +120,7 @@ const Login = () => {
                             <ProFormText.Password
                                 fieldProps={{
                                     size: 'large',
-                                    prefix: <MobileOutlined className={'prefixIcon'} />,
+                                    prefix: <LockOutlined className={'prefixIcon'} />,
                                 }}
                                 name="password"
                                 placeholder={'密码'}
