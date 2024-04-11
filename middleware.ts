@@ -1,9 +1,6 @@
 'use server'
 import {NextResponse,NextRequest} from 'next/server'
-import {cookies} from 'next/headers'
-import BizResult from "@/utils/BizResult";
 import {verifyAuth} from "@/utils/auth/auth";
-// import {cookieTools} from "@/utils/cookieTools";
 export async function middleware(req:NextRequest) {
     const verifiedToken = await verifyAuth(req).catch((err) => {
         console.error(err.message)
@@ -20,18 +17,9 @@ export async function middleware(req:NextRequest) {
             return NextResponse.redirect(new URL('/', req.url))
         }
     }
-    // console.log('middleware',request.cookies.get('cookie'))
-    // if (!request.cookies.get('cookie')) {
-    //     return Response.json(BizResult.fail('', '用户未登录'))
-    // }
-    // const {email} = cookieTools(request);
+
     return NextResponse.next()
-    // if (cookies().has(email)) {
-    //     console.log('cookie',cookies().get(email))
-    //     return NextResponse.next()
-    // } else {
-    //     return Response.json(BizResult.fail('', '登录过期'))
-    // }
+
 }
 
 // See "Matching Paths" below to learn more

@@ -5,8 +5,6 @@ import {expireUserCookie} from "@/utils/auth/auth";
 // 退出接口
 export async function GET(req:NextRequest) {
     try {
-
-
         return expireUserCookie(new NextResponse(JSON.stringify(BizResult.success('', '退出成功'))))
     } catch (error) {
         console.log(error);

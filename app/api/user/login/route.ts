@@ -1,11 +1,8 @@
 'use server';
 import BizResult from '@/utils/BizResult';
 import { query } from "@/utils/db";
-import {cookies} from "next/headers";
-import {encryptData} from "@/utils/cookieTools";
 import {NextRequest, NextResponse} from 'next/server'
 import {setUserCookie} from "@/utils/auth/auth";
-import { jsonResponse } from '@/utils/auth/utils'
 
 export async function POST(req: NextRequest) {
     console.log('进入');
@@ -23,9 +20,7 @@ export async function POST(req: NextRequest) {
                 headers: {'Content-Type': 'application/json'}
             });
         }
-
         const userPassword = user.rows[0].password;
-        const {email,user_id:userId,username:nickname} = user.rows[0];
         // 比对密码，这里假定您在数据库存储的是明文密码。实际操作请确保密码在存储时进行过哈希处理。
         if (userPassword !== password) {
             // 密码错误
@@ -33,15 +28,6 @@ export async function POST(req: NextRequest) {
                 headers: {'Content-Type': 'application/json'}
             });
         }
-        const oneDay = 60 * 1000 * 60 * 24 * 365
-        // cookies().set({
-        //     name: email,
-        //     value: cookie,
-        //     httpOnly: false,
-        //     path: '/',
-        //     expires: Date.now() + oneDay
-        // })
-
         // 登录成功
         return setUserCookie(new NextResponse(JSON.stringify(BizResult.success('', '登录成功'))))
     } catch (error) {
