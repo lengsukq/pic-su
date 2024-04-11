@@ -1,7 +1,8 @@
 'use server'
 import BizResult from '@/utils/BizResult';
 import {query} from "@/utils/db";
-export async function POST(req:Request) {
+import { NextRequest } from 'next/server'
+export async function POST(req:NextRequest) {
     console.log('进入')
     try {
         const jsonData = await req.json();

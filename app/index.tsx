@@ -11,11 +11,21 @@ const ProLayout = dynamic(
 );
 import React, {useState} from 'react';
 import dynamic from "next/dynamic";
+import {logout} from "@/utils/client/apihttp";
+import {message} from "antd";
 
 export default function MenuContainer({children}: Readonly<{ children: React.ReactNode; }>) {
     const [pathname, setPathname] = useState('/welcome');
     const [openLogin, setOpenLogin] = useState(false);
-
+    const logoutAct =async () => {
+        console.log('退出')
+        await logout().then((res)=>{
+            if (res.code===200){
+                message.success(res.msg)
+            }
+            console.log('logout',res)
+        })
+    }
     return (
         <>
         <UserLogin openLogin={openLogin} onChange={(e: boolean)=>setOpenLogin(e)}/>
@@ -99,7 +109,7 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                 menuFooterRender={(props) => {
                     if (props?.collapsed) return undefined;
                     return (
-                        <p
+                        <p onClick={logoutAct}
                             style={{
                                 textAlign: 'center',
                                 color: 'rgba(0,0,0,0.6)',

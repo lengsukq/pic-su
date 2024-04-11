@@ -16,3 +16,6 @@ interface RegisterParams {
 export async function userRegister(params:RegisterParams) {
     return post(`/api/user/register`, params);
 }
+export async function logout() {
+    return get(`/api/user/logout`);
+}

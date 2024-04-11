@@ -1,8 +1,10 @@
 'use server';
 import BizResult from '@/utils/BizResult';
 import { query } from "@/utils/db";
-
-export async function POST(req: Request) {
+import {cookies} from "next/headers";
+import {encryptData} from "@/utils/cookieTools";
+import { NextRequest } from 'next/server'
+export async function POST(req: NextRequest) {
     console.log('进入');
     try {
         const jsonData = await req.json();
@@ -10,7 +12,7 @@ export async function POST(req: Request) {
         console.log('jsonData', { username, password });
 
         // 通过用户名或邮箱查找用户
-        const user = await query('SELECT password FROM users WHERE username = $1 OR email = $1', [username]);
+        const user = await query('SELECT * FROM users WHERE username = $1 OR email = $1', [username]);
 
         if (user.rowCount === 0) {
             // 用户不存在
@@ -20,6 +22,7 @@ export async function POST(req: Request) {
         }
 
         const userPassword = user.rows[0].password;
+        const {email,id:userId,username:nickname} = user.rows[0];
         // 比对密码，这里假定您在数据库存储的是明文密码。实际操作请确保密码在存储时进行过哈希处理。
         if (userPassword !== password) {
             // 密码错误
@@ -27,10 +30,21 @@ export async function POST(req: Request) {
                 headers: {'Content-Type': 'application/json'}
             });
         }
+        const cookie = encryptData(JSON.stringify({
+            email: email, id: userId, username: nickname,
+        }))
+        const oneDay = 60 * 1000 * 60 * 24 * 365
+        cookies().set({
+            name: email,
+            value: cookie,
+            httpOnly: false,
+            path: '/',
+            expires: Date.now() + oneDay
+        })
 
         // 登录成功
         return new Response(JSON.stringify(BizResult.success('', '登录成功')), {
-            headers: {'Content-Type': 'application/json'}
+            headers: {'Content-Type': 'application/json','Set-Cookie': `cookie=${cookie}`}
         });
     } catch (error) {
         console.error(error);

@@ -1,9 +1,9 @@
 'use server'
 import BizResult from "@/utils/BizResult";
 import {upImgMain} from "@/utils/imageTools";
+import { NextRequest } from 'next/server'
 
-
-export async function POST(req:Request) {
+export async function POST(req:NextRequest) {
     try {
         //multipart/form-data;
         const formData = await req.formData();
