@@ -1,7 +1,7 @@
 'use server';
 import BizResult from '@/utils/BizResult';
 import { query } from "@/utils/db";
-import {NextRequest, NextResponse} from 'next/server'
+import {NextRequest} from 'next/server'
 import {setUserCookie} from "@/utils/auth/auth";
 
 export async function POST(req: NextRequest) {
@@ -16,20 +16,16 @@ export async function POST(req: NextRequest) {
 
         if (user.rowCount === 0) {
             // 用户不存在
-            return new Response(JSON.stringify(BizResult.fail('', '用户不存在')), {
-                headers: {'Content-Type': 'application/json'}
-            });
+            return BizResult.fail('', '用户不存在');
         }
         const userPassword = user.rows[0].password;
         // 比对密码，这里假定您在数据库存储的是明文密码。实际操作请确保密码在存储时进行过哈希处理。
         if (userPassword !== password) {
             // 密码错误
-            return new Response(JSON.stringify(BizResult.fail('', '密码错误')), {
-                headers: {'Content-Type': 'application/json'}
-            });
+            return BizResult.fail('', '密码错误');
         }
         // 登录成功
-        return setUserCookie(new NextResponse(JSON.stringify(BizResult.success('', '登录成功'))))
+        return setUserCookie(BizResult.success('', '登录成功'))
     } catch (error) {
         console.error(error);
         // 系统异常处理

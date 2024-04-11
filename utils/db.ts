@@ -17,7 +17,7 @@ export async function query(text: string, params?: any[]) {
         const res = await pool.query(text, params);
         const duration = Date.now() - start;
         console.log('executed query', { text, duration, rows: res.rowCount });
-        await closePool();
+        // await closePool();
         return res;
     }catch (e){
         console.log(e);

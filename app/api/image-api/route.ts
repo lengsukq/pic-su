@@ -13,10 +13,10 @@ export async function POST(req:NextRequest) {
         const fileData = {file, base64,bedType}
         // console.log('图片上传接口',fileData)
         const {msg, url} = await upImgMain(fileData);
-        return Response.json(BizResult.success({url: url}, msg))
+        return BizResult.success({url: url}, msg);
     } catch (err) {
         console.log('err', err)
-        return Response.json(BizResult.fail("图片上传失败"))
+        return BizResult.fail("图片上传失败");
 
     }
 }
