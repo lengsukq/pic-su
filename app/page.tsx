@@ -52,9 +52,12 @@ const App: React.FC = () => {
     };
 
 
-    const handleChange: UploadProps['onChange'] = ({fileList: newFileList}) => {
+    const handleChange: UploadProps['onChange'] = ({fileList: newFileList,file}) => {
+        if (file.status === 'done' && file.response.code!==200){
+            console.log('onChange',file);
+            message.error(file.response.msg).then();
+        }
         setFileList(newFileList);
-
     }
     // 图片压缩
     const beforeUpload = async (file: File) => {

@@ -37,6 +37,8 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
             }}
         >
             <ProLayout
+                title={'Pic-Su'}
+                logo={'https://i.ibb.co/bKN1t8J/b-39d762806a8d59b0015a4c98927abaf8.jpg'}
                 fixSiderbar
                 route={{
                     path: '/',
@@ -96,7 +98,7 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                 avatarProps={{
                     icon: <UserOutlined/>,
                     size: 'small',
-                    title: '七妮妮',
+                    title: 'Pic-Su',
                     onClick: () => {
                         setOpenLogin(true)
                     },
@@ -116,7 +118,7 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                                 paddingBlockStart: 12,
                             }}
                         >
-                            Power by Ant Design
+                            Power by Pic-Su
                         </p>
                     );
                 }}

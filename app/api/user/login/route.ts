@@ -3,7 +3,10 @@ import BizResult from '@/utils/BizResult';
 import { query } from "@/utils/db";
 import {cookies} from "next/headers";
 import {encryptData} from "@/utils/cookieTools";
-import { NextRequest } from 'next/server'
+import {NextRequest, NextResponse} from 'next/server'
+import {setUserCookie} from "@/utils/auth/auth";
+import { jsonResponse } from '@/utils/auth/utils'
+
 export async function POST(req: NextRequest) {
     console.log('进入');
     try {
@@ -30,22 +33,17 @@ export async function POST(req: NextRequest) {
                 headers: {'Content-Type': 'application/json'}
             });
         }
-        const cookie = encryptData(JSON.stringify({
-            email: email, id: userId, username: nickname,
-        }))
         const oneDay = 60 * 1000 * 60 * 24 * 365
-        cookies().set({
-            name: email,
-            value: cookie,
-            httpOnly: false,
-            path: '/',
-            expires: Date.now() + oneDay
-        })
+        // cookies().set({
+        //     name: email,
+        //     value: cookie,
+        //     httpOnly: false,
+        //     path: '/',
+        //     expires: Date.now() + oneDay
+        // })
 
         // 登录成功
-        return new Response(JSON.stringify(BizResult.success('', '登录成功')), {
-            headers: {'Content-Type': 'application/json','Set-Cookie': `cookie=${cookie}`}
-        });
+        return setUserCookie(new NextResponse(JSON.stringify(BizResult.success('', '登录成功'))))
     } catch (error) {
         console.error(error);
         // 系统异常处理
