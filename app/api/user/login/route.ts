@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         }
 
         const userPassword = user.rows[0].password;
-        const {email,id:userId,username:nickname} = user.rows[0];
+        const {email,user_id:userId,username:nickname} = user.rows[0];
         // 比对密码，这里假定您在数据库存储的是明文密码。实际操作请确保密码在存储时进行过哈希处理。
         if (userPassword !== password) {
             // 密码错误

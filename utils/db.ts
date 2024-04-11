@@ -12,11 +12,18 @@ const pool = new Pool({
 
 // 查询函数，可以在你的应用中任何需要进行数据库查询的地方使用
 export async function query(text: string, params?: any[]) {
-    const start = Date.now();
-    const res = await pool.query(text, params);
-    const duration = Date.now() - start;
-    console.log('executed query', { text, duration, rows: res.rowCount });
-    return res;
+    try {
+        const start = Date.now();
+        const res = await pool.query(text, params);
+        const duration = Date.now() - start;
+        console.log('executed query', { text, duration, rows: res.rowCount });
+        await closePool();
+        return res;
+    }catch (e){
+        console.log(e);
+        throw e;
+    }
+
 }
 
 // 连接池关闭函数
