@@ -1,14 +1,16 @@
 'use client'
 import {message} from "antd";
-
 interface ErrorWithResponse extends Error {
     response?: Response;
 }
 const checkStatus = (res:Response) => {
-    if (res.status >= 200 && res.status < 300) {
+    if (res.status === 200) {
         return res;
     }
-    message.error(`网络请求失败,${res.status}`);
+    res.json().then(value => {
+        message.error(`${value.msg}`);
+
+    })
     const error:ErrorWithResponse = new Error(res.statusText);
     error.response = res;
     throw error;
