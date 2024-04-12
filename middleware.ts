@@ -1,23 +1,15 @@
 'use server'
 import {NextResponse,NextRequest} from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
+import BizResult from "@/utils/BizResult";
 export async function middleware(req:NextRequest) {
     const verifiedToken = await verifyAuth(req).catch((err) => {
         console.error(err.message)
     })
     if (!verifiedToken) {
-        // if this an API request, respond with JSON
-        if (req.nextUrl.pathname.startsWith('/api/')) {
-            return new NextResponse(
-                JSON.stringify({ 'error': { message: 'authentication required' } }),
-                { status: 401 });
-        }
-        // otherwise, redirect to the set token page
-        else {
-            return NextResponse.redirect(new URL('/', req.url))
-        }
+        return BizResult.authfailed("");
     }
-
+        // return NextResponse.redirect(new URL('/', req.url))
     return NextResponse.next()
 
 }

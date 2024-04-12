@@ -38,7 +38,9 @@ class BizResult {
     // 工具方法用来创建NextResponse
     // 修改了工具方法的返回类型为NextResponse
     private static createResponse(bizResult: BizResult): NextResponse {
-        return new NextResponse(JSON.stringify(bizResult))
+        return new NextResponse(JSON.stringify(bizResult),{
+            status: bizResult.code
+        })
     }
 
     /**
@@ -75,6 +77,13 @@ class BizResult {
      */
     static apibusy(param: any, msg: string = BizResultCode.API_BUSY.desc): NextResponse {
         return this.createResponse(new BizResult(BizResultCode.API_BUSY.code, msg, param));
+    }
+
+    /**API_BUSY
+     * 用户未登录
+     */
+    static authfailed(param: any, msg: string = BizResultCode.AUTH_FAILED.desc): NextResponse {
+        return this.createResponse(new BizResult(BizResultCode.AUTH_FAILED.code, msg, param));
     }
 }
 
