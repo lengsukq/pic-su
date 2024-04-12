@@ -8,6 +8,6 @@ export async function GET(req:NextRequest) {
         return expireUserCookie(BizResult.success('', '退出成功'));
     } catch (error) {
         console.log(error);
-        return Response.json(BizResult.fail('','用户未登录'))
+        return BizResult.authfailed('')
     }
 }

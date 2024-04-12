@@ -29,8 +29,6 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         // 系统异常处理
-        return new Response(JSON.stringify(BizResult.fail('', '系统异常')), {
-            headers: {'Content-Type': 'application/json'}
-        });
+        return BizResult.fail('', '系统异常');
     }
 }
