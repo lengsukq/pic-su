@@ -5,12 +5,15 @@ import {NextRequest} from 'next/server'
 import {setUserCookie} from "@/utils/auth/auth";
 
 export async function POST(req: NextRequest) {
-    console.log('进入');
     try {
         const jsonData = await req.json();
         const { username, password } = jsonData;
         console.log('jsonData', { username, password });
-
+        // 参数有效性检查
+        if (!username || !password) {
+            // 参数不完整
+            return BizResult.validateFailed('', '参数不完整');
+        }
         // 通过用户名或邮箱查找用户
         const user = await query('SELECT * FROM users WHERE username = $1 OR email = $1', [username]);
 
@@ -29,6 +32,6 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error);
         // 系统异常处理
-        return BizResult.fail('', '系统异常');
+        return BizResult.fail('');
     }
 }

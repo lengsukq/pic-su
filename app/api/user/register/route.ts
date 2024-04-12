@@ -7,7 +7,11 @@ export async function POST(req:NextRequest) {
     try {
         const jsonData = await req.json();
         const {username, password, email} = jsonData;
-        console.log('{username, password, email}',username, password, email)
+        // 参数有效性检查
+        if (!username || !password || !email) {
+            // 参数不完整
+            return BizResult.validateFailed('', '参数不完整');
+        }
         // 创建用户
         // 检查用户名或邮箱是否已被占用
         const existingUser = await query('SELECT user_id FROM users WHERE username = $1 OR email = $2', [username, email]);

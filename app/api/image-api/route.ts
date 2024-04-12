@@ -8,8 +8,13 @@ export async function POST(req:NextRequest) {
         //multipart/form-data;
         const formData = await req.formData();
         const file:File = <File>formData.get('file');
-        const bedType = <"SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB">formData.get('bedType') || process.env.NEXT_PUBLIC_DEFAULT_BED;
         const base64 :string= <string>formData.get('base64');
+        // 参数有效性检查
+        if (!file || !base64) {
+            // 参数不完整
+            return BizResult.validateFailed('', '参数不完整');
+        }
+        const bedType = <"SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB">formData.get('bedType') || process.env.NEXT_PUBLIC_DEFAULT_BED;
         const fileData = {file, base64,bedType}
         // console.log('图片上传接口',fileData)
         const {msg, url} = await upImgMain(fileData);
