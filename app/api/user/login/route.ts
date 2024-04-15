@@ -8,7 +8,6 @@ export async function POST(req: NextRequest) {
     try {
         const jsonData = await req.json();
         const { username, password } = jsonData;
-        console.log('jsonData', { username, password });
         // 参数有效性检查
         if (!username || !password) {
             // 参数不完整
