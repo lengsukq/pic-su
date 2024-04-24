@@ -21,11 +21,11 @@ type DataSourceType = {
     usage_limit?: number,
     current_usage?: number
 };
-// type Params = {
-//     current: number,
-//     pageSize: number,
-//     tokenName: string,
-// }
+type ParamsType = {
+    current: number,
+    pageSize: number,
+    tokenName: string,
+}
 
 const App: React.FC = () => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
@@ -167,15 +167,11 @@ const App: React.FC = () => {
                 request={async (
                     // 第一个参数 params 查询表单和 params 参数的结合
                     // 第一个参数中一定会有 pageSize 和  current ，这两个参数是 antd 的规范
-                    params :any & {
-                        tokenName: string;
-                        pageSize: number;
-                        current: number;
-                    }
+                    params
                 ) => {
                     // 这里需要返回一个 Promise,在返回之前你可以进行数据转化
                     // 如果需要转化参数可以在这里进行修改
-                    const res = await getTokensList(params);
+                    const res = await getTokensList(params as ParamsType);
                     return {
                         data: res.data.record,
                         // success 请返回 true，
