@@ -13,6 +13,8 @@ export async function POST(req:NextRequest) {
         if (!tokenName || !status || !usageLimit) {
             // 参数不完整
             return BizResult.validateFailed('', '参数不完整');
+        }else if (status!=='enable' && status!=='disable'){
+            return BizResult.validateFailed('', '状态不正确');
         }
 
         // 生成随机的Token

@@ -7,13 +7,13 @@ export async function POST(req:NextRequest) {
     try {
         const {user_id:userId} = await verifyAuth(req)
         const jsonData = await req.json();
-        const {tokenName,currentPage, pageSize} = jsonData;
+        const {tokenName,current, pageSize} = jsonData;
         // 参数有效性检查
-        if (!currentPage || !pageSize) {
+        if (!current || !pageSize) {
             // 参数不完整
             return BizResult.validateFailed('', '参数不完整');
         }
-        const offset = (currentPage - 1) * pageSize; // 计算要跳过的记录数
+        const offset = (current - 1) * pageSize; // 计算要跳过的记录数
         const totalResult = await query(
             'SELECT COUNT(*) FROM tokens;',
         );
@@ -24,7 +24,7 @@ export async function POST(req:NextRequest) {
         // console.log('result',result)
         return BizResult.success({
             record: result.rows,
-            total: totalResult.rows[0].count
+            total: Number(totalResult.rows[0].count)
         }, '查询token列表成功');
     } catch (error) {
         console.log(error);

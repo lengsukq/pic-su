@@ -19,3 +19,22 @@ export async function userRegister(params:RegisterParams) {
 export async function logout() {
     return get(`/api/user/logout`);
 }
+// 获取token列表
+interface getTokensListParams {
+    tokenName:string,
+    current:number,
+    pageSize:number
+}
+export async function getTokensList(params:getTokensListParams) {
+    return post(`/api/tokenManage/getTokensList`, params);
+}
+// 添加token
+interface addTokenParams {
+    tokenName :string,
+    status:string,
+    usageLimit:number,
+    expireTime:string,
+}
+export async function addToken(params:addTokenParams) {
+    return post(`/api/tokenManage/addToken`, params);
+}

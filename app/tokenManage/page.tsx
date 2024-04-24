@@ -6,7 +6,8 @@ import {
     ProFormField,
     ProFormRadio,
 } from '@ant-design/pro-components';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import {getTokensList} from "@/utils/client/apihttp";
 
 const waitTime = (time: number = 100) => {
     return new Promise((resolve) => {
@@ -17,36 +18,22 @@ const waitTime = (time: number = 100) => {
 };
 
 type DataSourceType = {
-    id: React.Key;
-    title?: string;
-    readonly?: string;
-    decs?: string;
-    state?: string;
-    created_at?: number;
-    update_at?: number;
-    children?: DataSourceType[];
+    token_id: React.Key,
+    token?: string,
+    created_at?: string,
+    expires_at?: string,
+    token_name?: string,
+    description?: string,
+    status?: string,
+    usage_limit?: number,
+    current_usage?: number
 };
-
-const defaultData: DataSourceType[] = [
-    {
-        id: 624748504,
-        title: '活动名称一',
-        readonly: '活动名称一',
-        decs: '这个活动真好玩',
-        state: 'open',
-        created_at: 1590486176000,
-        update_at: 1590486176000,
-    },
-    {
-        id: 624691229,
-        title: '活动名称二',
-        readonly: '活动名称二',
-        decs: '这个活动真好玩',
-        state: 'closed',
-        created_at: 1590481162000,
-        update_at: 1590481162000,
-    },
-];
+type Params = {
+    current: number,
+    pageSize: number,
+    tokenName: string,
+}
+const defaultData: DataSourceType[] = [];
 
 export default () => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
@@ -54,11 +41,23 @@ export default () => {
     const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>(
         'top',
     );
+    const [pagination, setPagination] = useState(
+        {
+            current: 1,
+            total: 100,
+            pageSize: 10,
+            showSizeChanger: true,
+            onchange:(page:number, pageSize: number)=>paginationChange(page, pageSize),
+        }
+    );
+    const paginationChange = (page: number, pageSize: number)=>{
+        console.log('paginationChange',page,pageSize)
+    }
 
     const columns: ProColumns<DataSourceType>[] = [
         {
             title: 'token名称',
-            dataIndex: 'title',
+            dataIndex: 'token_name',
             tooltip: '只读，使用form.getFieldValue获取不到值',
             formItemProps: (form, { rowIndex }) => {
                 return {
@@ -66,60 +65,42 @@ export default () => {
                         rowIndex > 1 ? [{ required: true, message: '此项为必填项' }] : [],
                 };
             },
-            // 第一行不允许编辑
-            editable: (text, record, index) => {
-                return index !== 0;
-            },
             width: '15%',
         },
         {
             title: 'token',
-            dataIndex: 'readonly',
+            dataIndex: 'token',
             tooltip: '只读，使用form.getFieldValue可以获取到值',
             readonly: true,
             width: '15%',
         },
         {
             title: '状态',
-            key: 'state',
-            dataIndex: 'state',
+            key: 'status',
+            dataIndex: 'status',
             valueType: 'select',
             valueEnum: {
-                all: { text: '全部', status: 'Default' },
-                open: {
-                    text: '未解决',
-                    status: 'Error',
+                enable: {
+                    text: '启用',
+                    status: 'enable',
                 },
-                closed: {
-                    text: '已解决',
-                    status: 'Success',
+                disable: {
+                    text: '禁用',
+                    status: 'disable',
                 },
             },
         },
         {
             title: '描述',
-            dataIndex: 'decs',
-            fieldProps: (form, { rowKey, rowIndex }) => {
-                if (form.getFieldValue([rowKey || '', 'title']) === '不好玩') {
-                    return {
-                        disabled: true,
-                    };
-                }
-                if (rowIndex > 9) {
-                    return {
-                        disabled: true,
-                    };
-                }
-                return {};
-            },
+            dataIndex: 'description',
         },
         {
             title: '剩余次数',
-            dataIndex: 'created_at',
+            dataIndex: 'usage_limit',
         },
         {
             title: '使用次数',
-            dataIndex: 'created_at',
+            dataIndex: 'current_usage',
             readonly: true,
         },
         {
@@ -130,7 +111,7 @@ export default () => {
         },
         {
             title: '到期时间',
-            dataIndex: 'created_at',
+            dataIndex: 'expires_at',
             valueType: 'date',
         },
         {
@@ -141,7 +122,7 @@ export default () => {
                 <a
                     key="editable"
                     onClick={() => {
-                        action?.startEditable?.(record.id);
+                        action?.startEditable?.(record.token_id);
                     }}
                 >
                     编辑
@@ -149,7 +130,7 @@ export default () => {
                 <a
                     key="delete"
                     onClick={() => {
-                        setDataSource(dataSource.filter((item) => item.id !== record.id));
+                        setDataSource(dataSource.filter((item) => item.token_id !== record.token_id));
                     }}
                 >
                     删除
@@ -161,9 +142,10 @@ export default () => {
     return (
         <>
             <EditableProTable<DataSourceType>
-                rowKey="id"
+                rowKey="token_id"
                 headerTitle="Token管理"
-                maxLength={5}
+                // pagination={pagination}
+                maxLength={10}
                 scroll={{
                     x: 960,
                 }}
@@ -171,7 +153,7 @@ export default () => {
                     position !== 'hidden'
                         ? {
                             position: position as 'top',
-                            record: () => ({ id: (Math.random() * 1000000).toFixed(0) }),
+                            record: () => ({ token_id: (Math.random() * 1000000).toFixed(0) }),
                         }
                         : false
                 }
@@ -200,19 +182,37 @@ export default () => {
                     />,
                 ]}
                 columns={columns}
-                request={async () => ({
-                    data: defaultData,
-                    total: 3,
-                    success: true,
-                })}
+                pagination={{ pageSize:10,current:1}}
+                params={{tokenName:''}}
+                request={async (
+                    // 第一个参数 params 查询表单和 params 参数的结合
+                    // 第一个参数中一定会有 pageSize 和  current ，这两个参数是 antd 的规范
+                    params :any & {
+                        tokenName: string;
+                        pageSize: number;
+                        current: number;
+                    }
+                ) => {
+                    // 这里需要返回一个 Promise,在返回之前你可以进行数据转化
+                    // 如果需要转化参数可以在这里进行修改
+                    const res = await getTokensList(params);
+                    return {
+                        data: res.data.record,
+                        // success 请返回 true，
+                        // 不然 table 会停止解析数据，即使有数据
+                        success: res.code === 200,
+                        // 不传会使用 data 的长度，如果是分页一定要传
+                        total: res.data.total,
+                    };
+                }}
                 value={dataSource}
                 onChange={setDataSource}
                 editable={{
                     type: 'multiple',
                     editableKeys,
                     onSave: async (rowKey, data, row) => {
-                        console.log(rowKey, data, row);
-                        await waitTime(2000);
+                        console.log('onSave',rowKey, data, row);
+                        // await waitTime(2000);
                     },
                     onChange: setEditableRowKeys,
                 }}
