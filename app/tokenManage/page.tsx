@@ -6,16 +6,9 @@ import {
     ProFormField,
     ProFormRadio,
 } from '@ant-design/pro-components';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {getTokensList} from "@/utils/client/apihttp";
 
-const waitTime = (time: number = 100) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time);
-    });
-};
 
 type DataSourceType = {
     token_id: React.Key,
@@ -28,31 +21,18 @@ type DataSourceType = {
     usage_limit?: number,
     current_usage?: number
 };
-type Params = {
-    current: number,
-    pageSize: number,
-    tokenName: string,
-}
-const defaultData: DataSourceType[] = [];
+// type Params = {
+//     current: number,
+//     pageSize: number,
+//     tokenName: string,
+// }
 
-export default () => {
+const App: React.FC = () => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
     const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>(
         'top',
     );
-    const [pagination, setPagination] = useState(
-        {
-            current: 1,
-            total: 100,
-            pageSize: 10,
-            showSizeChanger: true,
-            onchange:(page:number, pageSize: number)=>paginationChange(page, pageSize),
-        }
-    );
-    const paginationChange = (page: number, pageSize: number)=>{
-        console.log('paginationChange',page,pageSize)
-    }
 
     const columns: ProColumns<DataSourceType>[] = [
         {
@@ -233,3 +213,4 @@ export default () => {
         </>
     );
 };
+export default App;
