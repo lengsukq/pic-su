@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
             return BizResult.fail('', '密码错误');
         }
         // 登录成功
-        return setUserCookie(BizResult.success('', '登录成功'))
+        return setUserCookie(BizResult.success('', '登录成功'),user.rows[0])
     } catch (error) {
         console.error(error);
         // 系统异常处理

@@ -7,6 +7,11 @@ import { USER_TOKEN, getJwtSecretKey } from './constants'
 interface UserJwtPayload {
     jti: string
     iat: number
+    user_id?: number
+    username?: string
+    email?: string
+    created_at?: string
+    updated_at?: string
 }
 
 export class AuthError extends Error {}
@@ -33,8 +38,8 @@ export async function verifyAuth(req: NextRequest) {
 /**
  * Adds the user token cookie to a response.
  */
-export async function setUserCookie(res: NextResponse) {
-    const token = await new SignJWT({})
+export async function setUserCookie(res: NextResponse,userInfo:any) {
+    const token = await new SignJWT(userInfo)
         .setProtectedHeader({ alg: 'HS256' })
         .setJti(nanoid())
         .setIssuedAt()
