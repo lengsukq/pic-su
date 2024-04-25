@@ -7,7 +7,7 @@ import {
     ProFormRadio,
 } from '@ant-design/pro-components';
 import React, {useState,useRef} from 'react';
-import {deleteToken, editToken, getTokensList} from "@/utils/client/apihttp";
+import {addToken, deleteToken, editToken, getTokensList} from "@/utils/client/apihttp";
 import {message} from "antd";
 
 type DataSourceType = {
@@ -80,6 +80,12 @@ const App: React.FC = () => {
         {
             title: '剩余次数',
             dataIndex: 'usage_limit',
+            valueType: 'digit',
+            formItemProps: (form, { rowIndex }) => {
+                return {
+                    rules:[{ required: true, message: '请填写剩余次数' }]
+                };
+            },
         },
         {
             title: '使用次数',
@@ -206,18 +212,33 @@ const App: React.FC = () => {
                     editableKeys,
                     onSave: async (rowKey, data, row) => {
                         console.log('onSave',rowKey, data, row);
-                        await editToken({
-                            tokenId: row.token_id as number,
-                            tokenName: data.token_name as string,
-                            description: data.description as string,
-                            expiresAt: data.expires_at as string,
-                            status: data.status as string,
-                            usageLimit: data.usage_limit as number
-                        }).then(res=>{
-                            if(res.code === 200){
-                                message.success('编辑成功');
-                            }
-                        });
+                        if (data.token){
+                            await editToken({
+                                tokenId: row.token_id as number,
+                                tokenName: data.token_name as string,
+                                description: data.description as string,
+                                expiresAt: data.expires_at as string,
+                                status: data.status as string,
+                                usageLimit: data.usage_limit as number
+                            }).then(res=>{
+                                if(res.code === 200){
+                                    message.success('编辑成功');
+                                }
+                            });
+                        }else{
+                            await addToken({
+                                tokenName: data.token_name as string,
+                                description: data.description as string || "",
+                                expiresAt: data.expires_at as string,
+                                status: data.status as string,
+                                usageLimit: data.usage_limit as number
+                            }).then(res=>{
+                                if(res.code === 200){
+                                    message.success(res.msg);
+                                }
+                            })
+                        }
+
                     },
                     onChange: setEditableRowKeys,
                 }}

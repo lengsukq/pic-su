@@ -29,13 +29,13 @@ export async function getTokensList(params:getTokensListParams) {
     return post(`/api/tokenManage/getTokensList`, params);
 }
 // 添加token
-interface addTokenParams {
-    tokenName :string,
-    status:string,
-    usageLimit:number,
-    expireTime:string,
-}
-export async function addToken(params:addTokenParams) {
+export async function addToken(params: {
+    usageLimit: number;
+    tokenName: string;
+    description: string;
+    expiresAt: string;
+    status: string
+}) {
     return post(`/api/tokenManage/addToken`, params);
 }
 // 修改token

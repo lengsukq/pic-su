@@ -18,7 +18,7 @@ export async function POST(req:NextRequest) {
             'SELECT COUNT(*) FROM tokens;',
         );
         const result = await query(
-            'SELECT * FROM tokens WHERE user_id = $1 AND ($2 = \'\' OR token_name LIKE $2) LIMIT $3 OFFSET $4;',
+            'SELECT * FROM tokens WHERE user_id = $1 AND ($2 = \'\' OR token_name LIKE $2) ORDER BY token_id DESC LIMIT $3 OFFSET $4;',
             [userId,tokenName||"", pageSize, offset]
         );
         // console.log('result',result)
