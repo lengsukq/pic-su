@@ -38,3 +38,15 @@ interface addTokenParams {
 export async function addToken(params:addTokenParams) {
     return post(`/api/tokenManage/addToken`, params);
 }
+// 修改token
+interface editTokenParams {
+    tokenId: number,
+    expiresAt: string,
+    tokenName: string,
+    status: string,
+    usageLimit: number,
+    description: string
+}
+export async function editToken(params:editTokenParams) {
+    return post(`/api/tokenManage/editToken`, params);
+}

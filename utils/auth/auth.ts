@@ -43,7 +43,7 @@ export async function setUserCookie(res: NextResponse,userInfo:any) {
         .setProtectedHeader({ alg: 'HS256' })
         .setJti(nanoid())
         .setIssuedAt()
-        .setExpirationTime('2h')
+        .setExpirationTime('1d')
         .sign(new TextEncoder().encode(getJwtSecretKey()))
 
     res.cookies.set(USER_TOKEN, token, {

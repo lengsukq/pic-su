@@ -7,8 +7,19 @@ import {
     ProFormRadio,
 } from '@ant-design/pro-components';
 import React, {useState} from 'react';
-import {getTokensList} from "@/utils/client/apihttp";
+import {editToken, getTokensList} from "@/utils/client/apihttp";
+import {message} from "antd";
 
+type editTokenParams={
+    token_id: number,
+    token: string,
+    expires_at: string,
+    token_name: string,
+    description: string,
+    status: string,
+    usage_limit: number,
+    current_usage: number
+}
 
 type DataSourceType = {
     token_id: React.Key,
@@ -188,7 +199,18 @@ const App: React.FC = () => {
                     editableKeys,
                     onSave: async (rowKey, data, row) => {
                         console.log('onSave',rowKey, data, row);
-                        // await waitTime(2000);
+                        await editToken({
+                            tokenId: row.token_id as number,
+                            tokenName: data.token_name as string,
+                            description: data.description as string,
+                            expiresAt: data.expires_at as string,
+                            status: data.status as string,
+                            usageLimit: data.usage_limit as number
+                        }).then(res=>{
+                            if(res.code === 200){
+                                message.success('编辑成功');
+                            }
+                        });
                     },
                     onChange: setEditableRowKeys,
                 }}
