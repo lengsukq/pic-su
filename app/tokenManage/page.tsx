@@ -27,19 +27,20 @@ type ParamsType = {
     tokenName: string,
 }
 
-const App: React.FC = () => {
+const Page: React.FC = () => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
     const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>(
         'top',
     );
-
+    const [pageSize, setPageSize] = useState<number>(10);
+    const [current, setCurrent] = useState<number>(1);
     const actionRef = useRef<any>();
     const columns: ProColumns<DataSourceType>[] = [
         {
             title: 'token名称',
             dataIndex: 'token_name',
-            formItemProps: (form, { rowIndex }) => {
+            formItemProps: () => {
                 return {
                     rules:[{ required: true, message: '请输入token名称' }]
                 };
@@ -68,7 +69,7 @@ const App: React.FC = () => {
                     status: 'disable',
                 },
             },
-            formItemProps: (form, { rowIndex }) => {
+            formItemProps: () => {
                 return {
                     rules:[{ required: true, message: '请选择状态' }]
                 };
@@ -82,7 +83,7 @@ const App: React.FC = () => {
             title: '剩余次数',
             dataIndex: 'usage_limit',
             valueType: 'digit',
-            formItemProps: (form, { rowIndex }) => {
+            formItemProps: () => {
                 return {
                     rules:[{ required: true, message: '请填写剩余次数' }]
                 };
@@ -103,7 +104,7 @@ const App: React.FC = () => {
             title: '到期时间',
             dataIndex: 'expires_at',
             valueType: 'date',
-            formItemProps: (form, { rowIndex }) => {
+            formItemProps: () => {
                 return {
                     rules:[{ required: true, message: '请选择到期时间' }]
                 };
@@ -155,12 +156,10 @@ const App: React.FC = () => {
                     x: 960,
                 }}
                 recordCreatorProps={
-                    position !== 'hidden'
-                        ? {
-                            position: position as 'top',
-                            record: () => ({ token_id: (Math.random() * 1000000).toFixed(0) }),
-                        }
-                        : false
+                    {
+                        position: position as 'top',
+                        record: () => ({ token_id: (Math.random() * 1000000).toFixed(0) }),
+                    }
                 }
                 loading={false}
                 toolBarRender={() => [
@@ -187,7 +186,7 @@ const App: React.FC = () => {
                     />,
                 ]}
                 columns={columns}
-                pagination={{ pageSize:10,current:1}}
+                pagination={{ pageSize:pageSize,current:current,showSizeChanger:true}}
                 params={{tokenName:''}}
                 request={async (
                     // 第一个参数 params 查询表单和 params 参数的结合
@@ -197,6 +196,11 @@ const App: React.FC = () => {
                     // 这里需要返回一个 Promise,在返回之前你可以进行数据转化
                     // 如果需要转化参数可以在这里进行修改
                     const res = await getTokensList(params as ParamsType);
+                    if (res.code === 200){
+                        setPageSize(params.pageSize as number);
+                        setCurrent(params.current as number);
+
+                    }
                     return {
                         data: res.data.record,
                         // success 请返回 true，
@@ -262,4 +266,4 @@ const App: React.FC = () => {
         </>
     );
 };
-export default App;
+export default Page;

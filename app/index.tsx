@@ -4,16 +4,15 @@ import {
     TabletOutlined, UserOutlined,
 } from '@ant-design/icons';
 import UserLogin from "@/components/userLogin"
-
-const ProLayout = dynamic(
-    () => import("@ant-design/pro-components").then((com) => com.ProLayout),
-    {ssr: false}
-);
 import React, {useState} from 'react';
 import dynamic from "next/dynamic";
 import {logout} from "@/utils/client/apihttp";
 import {message} from "antd";
-
+import {useRouter} from "next/navigation";
+const ProLayout = dynamic(
+    () => import("@ant-design/pro-components").then((com) => com.ProLayout),
+    {ssr: false}
+);
 export default function MenuContainer({children}: Readonly<{ children: React.ReactNode; }>) {
     const [pathname, setPathname] = useState('/welcome');
     const [openLogin, setOpenLogin] = useState(false);
@@ -26,6 +25,7 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
             console.log('logout',res)
         })
     }
+    const router = useRouter()
     return (
         <>
         <UserLogin openLogin={openLogin} onChange={(e: boolean)=>setOpenLogin(e)}/>
@@ -44,50 +44,23 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                     path: '/',
                     routes: [
                         {
+                            name: '图片上传',
+                            icon: <TabletOutlined/>,
+                            path: '/',
+                            component: './ListTableList',
+                        },
+                        {
                             path: '/admin',
                             name: '管理页',
                             icon: <CrownOutlined/>,
                             access: 'canAdmin',
-                            component: './Admin',
                             routes: [
                                 {
-                                    path: '/admin/sub-page1',
-                                    name: '一级页面',
+                                    path: '/tokenManage',
+                                    name: 'token管理',
                                     icon: <CrownOutlined/>,
                                     component: './Welcome',
-                                },
-                                {
-                                    path: '/admin/sub-page2',
-                                    name: '二级页面',
-                                    icon: <CrownOutlined/>,
-                                    component: './Welcome',
-                                },
-                                {
-                                    path: '/admin/sub-page3',
-                                    name: '三级页面',
-                                    icon: <CrownOutlined/>,
-                                    component: './Welcome',
-                                },
-                            ],
-                        },
-                        {
-                            name: '列表页',
-                            icon: <TabletOutlined/>,
-                            path: '/list',
-                            component: './ListTableList',
-                            routes: [
-                                {
-                                    path: '/list/sub-page2',
-                                    name: '二级列表页面',
-                                    icon: <CrownOutlined/>,
-                                    component: './Welcome',
-                                },
-                                {
-                                    path: '/list/sub-page3',
-                                    name: '三级列表页面',
-                                    icon: <CrownOutlined/>,
-                                    component: './Welcome',
-                                },
+                                }
                             ],
                         },
                     ],
@@ -126,7 +99,8 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                 menuItemRender={(item, dom) => (
                     <a
                         onClick={() => {
-                            setPathname(item.path || '/welcome');
+                            router.push(item.path as string)
+                            // setPathname(item.path || '/welcome');
                         }}
                     >
                         {dom}
