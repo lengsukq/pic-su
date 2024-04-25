@@ -42,6 +42,7 @@ const Page: React.FC = () => {
             dataIndex: 'token_name',
             formItemProps: () => {
                 return {
+                    placeholder: '请输入token名称查询',
                     rules:[{ required: true, message: '请输入token名称' }]
                 };
             },
@@ -53,12 +54,14 @@ const Page: React.FC = () => {
             tooltip: '只读，使用form.getFieldValue可以获取到值',
             readonly: true,
             width: '15%',
+            hideInSearch: true,
         },
         {
             title: '状态',
             key: 'status',
             dataIndex: 'status',
             valueType: 'select',
+            hideInSearch: true,
             valueEnum: {
                 enable: {
                     text: '启用',
@@ -78,11 +81,13 @@ const Page: React.FC = () => {
         {
             title: '描述',
             dataIndex: 'description',
+            hideInSearch: true,
         },
         {
             title: '剩余次数',
             dataIndex: 'usage_limit',
             valueType: 'digit',
+            hideInSearch: true,
             formItemProps: () => {
                 return {
                     rules:[{ required: true, message: '请填写剩余次数' }]
@@ -93,17 +98,20 @@ const Page: React.FC = () => {
             title: '使用次数',
             dataIndex: 'current_usage',
             readonly: true,
+            hideInSearch: true,
         },
         {
             title: '创建时间',
             dataIndex: 'created_at',
             valueType: 'date',
             readonly: true,
+            hideInSearch: true,
         },
         {
             title: '到期时间',
             dataIndex: 'expires_at',
             valueType: 'date',
+            hideInSearch: true,
             formItemProps: () => {
                 return {
                     rules:[{ required: true, message: '请选择到期时间' }]
@@ -162,6 +170,7 @@ const Page: React.FC = () => {
                     }
                 }
                 loading={false}
+                search={{}}
                 toolBarRender={() => [
                     <ProFormRadio.Group
                         key="render"
