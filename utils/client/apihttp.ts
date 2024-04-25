@@ -50,3 +50,10 @@ interface editTokenParams {
 export async function editToken(params:editTokenParams) {
     return post(`/api/tokenManage/editToken`, params);
 }
+// 删除token
+interface deleteTokenParams {
+    tokenId: number,
+}
+export async function deleteToken(params:deleteTokenParams) {
+    return post(`/api/tokenManage/deleteToken`, params);
+}

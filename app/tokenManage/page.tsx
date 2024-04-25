@@ -6,20 +6,9 @@ import {
     ProFormField,
     ProFormRadio,
 } from '@ant-design/pro-components';
-import React, {useState} from 'react';
-import {editToken, getTokensList} from "@/utils/client/apihttp";
+import React, {useState,useRef} from 'react';
+import {deleteToken, editToken, getTokensList} from "@/utils/client/apihttp";
 import {message} from "antd";
-
-type editTokenParams={
-    token_id: number,
-    token: string,
-    expires_at: string,
-    token_name: string,
-    description: string,
-    status: string,
-    usage_limit: number,
-    current_usage: number
-}
 
 type DataSourceType = {
     token_id: React.Key,
@@ -49,11 +38,9 @@ const App: React.FC = () => {
         {
             title: 'token名称',
             dataIndex: 'token_name',
-            tooltip: '只读，使用form.getFieldValue获取不到值',
             formItemProps: (form, { rowIndex }) => {
                 return {
-                    rules:
-                        rowIndex > 1 ? [{ required: true, message: '此项为必填项' }] : [],
+                    rules:[{ required: true, message: '请输入token名称' }]
                 };
             },
             width: '15%',
@@ -80,6 +67,11 @@ const App: React.FC = () => {
                     status: 'disable',
                 },
             },
+            formItemProps: (form, { rowIndex }) => {
+                return {
+                    rules:[{ required: true, message: '请选择状态' }]
+                };
+            },
         },
         {
             title: '描述',
@@ -104,6 +96,11 @@ const App: React.FC = () => {
             title: '到期时间',
             dataIndex: 'expires_at',
             valueType: 'date',
+            formItemProps: (form, { rowIndex }) => {
+                return {
+                    rules:[{ required: true, message: '请选择到期时间' }]
+                };
+            },
         },
         {
             title: '操作',
@@ -113,6 +110,7 @@ const App: React.FC = () => {
                 <a
                     key="editable"
                     onClick={() => {
+
                         action?.startEditable?.(record.token_id);
                     }}
                 >
@@ -120,8 +118,19 @@ const App: React.FC = () => {
                 </a>,
                 <a
                     key="delete"
-                    onClick={() => {
-                        setDataSource(dataSource.filter((item) => item.token_id !== record.token_id));
+                    onClick={async () => {
+                        if (record.token){
+                            await deleteToken({tokenId: record.token_id as number}).then(res=>{
+                                if(res.code==200){
+                                    message.success(res.msg);
+                                    action?.reload();
+                                }
+                            })
+                        }else{
+                            setDataSource(dataSource.filter((item) => item.token_id !== record.token_id));
+                            message.success('删除成功');
+                        }
+
                     }}
                 >
                     删除
@@ -129,14 +138,12 @@ const App: React.FC = () => {
             ],
         },
     ];
-
     return (
         <>
             <EditableProTable<DataSourceType>
                 rowKey="token_id"
                 headerTitle="Token管理"
-                // pagination={pagination}
-                maxLength={10}
+                maxLength={11}
                 scroll={{
                     x: 960,
                 }}
