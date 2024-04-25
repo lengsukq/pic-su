@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
         const jsonData = await req.json();
         const {tokenName, status, usageLimit, expiresAt, description} = jsonData;
         // 参数有效性检查
-        if (!tokenName || !status || !usageLimit || !expiresAt) {
+        if (!tokenName || !status || !expiresAt) {
             // 参数不完整
             return BizResult.validateFailed('', '参数不完整');
         } else if (status !== 'enable' && status !== 'disable') {

@@ -34,6 +34,7 @@ const App: React.FC = () => {
         'top',
     );
 
+    const actionRef = useRef<any>();
     const columns: ProColumns<DataSourceType>[] = [
         {
             title: 'token名称',
@@ -205,6 +206,7 @@ const App: React.FC = () => {
                         total: res.data.total,
                     };
                 }}
+                actionRef={actionRef}
                 value={dataSource}
                 onChange={setDataSource}
                 editable={{
@@ -235,6 +237,7 @@ const App: React.FC = () => {
                             }).then(res=>{
                                 if(res.code === 200){
                                     message.success(res.msg);
+                                    actionRef.current.reload();
                                 }
                             })
                         }
