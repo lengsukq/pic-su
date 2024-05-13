@@ -8,7 +8,7 @@ import {
 } from '@ant-design/pro-components';
 import React, {useState,useRef} from 'react';
 import {addToken, deleteToken, editToken, getTokensList} from "@/utils/client/apihttp";
-import {message} from "antd";
+import {Form, Input, message} from "antd";
 
 type DataSourceType = {
     token_id: React.Key,
@@ -31,12 +31,15 @@ const Page: React.FC = () => {
     const [pageSize, setPageSize] = useState<number>(10);
     const [current, setCurrent] = useState<number>(1);
     const actionRef = useRef<any>();
+    const [form] = Form.useForm();
+    const [searchTokenName, setSearchTokenName] = useState<string>('');
     const columns: ProColumns<DataSourceType>[] = [
         {
             title: 'token名称',
             dataIndex: 'token_name',
             formItemProps: () => {
                 return {
+                    // label: 'Token名称',
                     placeholder: '请输入token名称查询',
                     rules:[{ required: true, message: '请输入token名称' }]
                 };
@@ -46,7 +49,7 @@ const Page: React.FC = () => {
         {
             title: 'token',
             dataIndex: 'token',
-            tooltip: '只读，使用form.getFieldValue可以获取到值',
+            tooltip: '请勿随意泄漏你的token',
             readonly: true,
             width: '15%',
             hideInSearch: true,
@@ -152,6 +155,7 @@ const Page: React.FC = () => {
     return (
         <>
             <EditableProTable<DataSourceType>
+                search={false}
                 rowKey="token_id"
                 headerTitle="Token管理"
                 maxLength={11}
@@ -165,40 +169,34 @@ const Page: React.FC = () => {
                     }
                 }
                 loading={false}
-                search={{}}
                 toolBarRender={() => [
-                    <ProFormRadio.Group
-                        key="render"
-                        fieldProps={{
-                            value: position,
-                            onChange: (e) => setPosition(e.target.value),
-                        }}
-                        options={[
-                            {
-                                label: '添加到顶部',
-                                value: 'top',
-                            },
-                            {
-                                label: '添加到底部',
-                                value: 'bottom',
-                            },
-                            {
-                                label: '隐藏',
-                                value: 'hidden',
-                            },
-                        ]}
-                    />,
+                    <Form form={form}>
+                        <Form.Item name="search">
+                            <Input.Search
+                                placeholder="请输入token名称"
+                                onSearch={(value) => {
+                                    setSearchTokenName(value)
+                                    // 手动触发搜索
+                                    actionRef.current.reload();
+                                }}
+                                enterButton
+                            />
+                        </Form.Item>
+                    </Form>,
                 ]}
                 columns={columns}
                 pagination={{ pageSize:pageSize,current:current,showSizeChanger:true}}
-                params={{}}
+                params={{
+                    tokenName:searchTokenName,
+                }}
                 request={async (
                     // 第一个参数 params 查询表单和 params 参数的结合
                     // 第一个参数中一定会有 pageSize 和  current ，这两个参数是 antd 的规范
                     params
                 ) => {
+                    console.log('params',params)
                     let paramsData = {
-                        tokenName:params.token_name || '' as string,
+                        tokenName:params.tokenName as string,
                         pageSize:params.pageSize as number,
                         current:params.current as number,
                     }
