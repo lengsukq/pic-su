@@ -4,11 +4,10 @@ import {
     EditableProTable,
     ProCard,
     ProFormField,
-    ProFormRadio,
 } from '@ant-design/pro-components';
 import React, {useState,useRef} from 'react';
 import {addToken, deleteToken, editToken, getTokensList} from "@/utils/client/apihttp";
-import {Form, Input, message} from "antd";
+import {Form, Input, App} from "antd";
 
 type DataSourceType = {
     token_id: React.Key,
@@ -21,17 +20,13 @@ type DataSourceType = {
     usage_limit?: number,
     current_usage?: number
 };
-
 const Page: React.FC = () => {
+    const {message} = App.useApp();
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
-    const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>(
-        'top',
-    );
     const [pageSize, setPageSize] = useState<number>(10);
     const [current, setCurrent] = useState<number>(1);
     const actionRef = useRef<any>();
-    const [form] = Form.useForm();
     const [searchTokenName, setSearchTokenName] = useState<string>('');
     const columns: ProColumns<DataSourceType>[] = [
         {
@@ -39,7 +34,6 @@ const Page: React.FC = () => {
             dataIndex: 'token_name',
             formItemProps: () => {
                 return {
-                    // label: 'Token名称',
                     placeholder: '请输入token名称查询',
                     rules:[{ required: true, message: '请输入token名称' }]
                 };
@@ -53,6 +47,16 @@ const Page: React.FC = () => {
             readonly: true,
             width: '15%',
             hideInSearch: true,
+            render: (text, record) => [
+                <a  key='token'
+                    onClick={() => {
+                        // 点击事件处理逻辑
+                        copyToClipboard(record.token as string)
+                    }}
+                >
+                    {record.token}
+                </a>,
+            ],
         },
         {
             title: '状态',
@@ -124,8 +128,7 @@ const Page: React.FC = () => {
                 <a
                     key="editable"
                     onClick={() => {
-
-                        action?.startEditable?.(record.token_id);
+                        actionRef.current.startEditable(record.token_id);
                     }}
                 >
                     编辑
@@ -152,10 +155,19 @@ const Page: React.FC = () => {
             ],
         },
     ];
+    // 传入val值复制到剪贴板
+    const copyToClipboard = (val: string) => {
+        const input = document.createElement('input');
+        input.value = val;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        message.success('复制成功')
+    };
     return (
         <>
             <EditableProTable<DataSourceType>
-                search={false}
                 rowKey="token_id"
                 headerTitle="Token管理"
                 maxLength={11}
@@ -164,13 +176,13 @@ const Page: React.FC = () => {
                 }}
                 recordCreatorProps={
                     {
-                        position: position as 'top',
+                        position: 'top',
                         record: () => ({ token_id: (Math.random() * 1000000).toFixed(0) }),
                     }
                 }
                 loading={false}
                 toolBarRender={() => [
-                    <Form form={form}>
+                    <Form>
                         <Form.Item name="search">
                             <Input.Search
                                 placeholder="请输入token名称"
@@ -226,7 +238,7 @@ const Page: React.FC = () => {
                     type: 'multiple',
                     editableKeys,
                     onSave: async (rowKey, data, row) => {
-                        console.log('onSave',rowKey, data, row);
+                        // console.log('onSave',rowKey, data, row);
                         if (data.token){
                             await editToken({
                                 tokenId: row.token_id as number,
