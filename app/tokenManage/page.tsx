@@ -182,7 +182,7 @@ const Page: React.FC = () => {
                 }
                 loading={false}
                 toolBarRender={() => [
-                    <Form>
+                    <Form key='searchForm'>
                         <Form.Item name="search">
                             <Input.Search
                                 placeholder="请输入token名称"
