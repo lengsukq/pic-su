@@ -17,9 +17,10 @@ export async function POST(req:NextRequest) {
         const totalResult = await query(
             'SELECT COUNT(*) FROM tokens;',
         );
+        // 查询当前页数据
         const result = await query(
-            'SELECT * FROM tokens WHERE user_id = $1 AND ($2 = \'\' OR token_name LIKE $2) ORDER BY token_id DESC LIMIT $3 OFFSET $4;',
-            [userId,tokenName||"", pageSize, offset]
+            'SELECT * FROM tokens WHERE user_id = $1 AND ($2 = \'\' OR token_name ILIKE $2) ORDER BY token_id DESC LIMIT $3 OFFSET $4;',
+            [userId, `%${tokenName || ""}%`, pageSize, offset] // 使用参数化查询防止 SQL 注入
         );
         // console.log('result',result)
         return BizResult.success({
