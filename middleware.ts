@@ -1,4 +1,4 @@
-'use server'
+// 'use server'
 import {NextResponse,NextRequest} from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
 import BizResult from "@/utils/BizResult";
@@ -25,7 +25,8 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          */
-        '/api/((?!user).*)',
+        // '/api/image-api/((?!token))',
+        '/api/((?!user)(?!image-api/token).*)',
         // '/((?!/uuuu|_next/static|_next/image|favicon.ico).*)',
 
     ],
