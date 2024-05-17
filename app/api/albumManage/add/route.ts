@@ -8,16 +8,16 @@ export async function POST(req: NextRequest) {
     try {
         const {user_id: userId} = await verifyAuth(req)
         const jsonData = await req.json();
-        const {title, description} = jsonData;
+        const {albumName, description} = jsonData;
         // 参数有效性检查
-        if (!title || !description) {
+        if (!albumName || !description) {
             // 参数不完整
             return BizResult.validateFailed('', '参数不完整');
         }
 
         await query(
-            `INSERT INTO albums(title, description, user_id, created_at, updated_at) VALUES ( $1, $2, $3, NOW(), NOW()) RETURNING album_id;`,
-            [title, description, userId]
+            `INSERT INTO albums(album_name, description, user_id, created_at, updated_at) VALUES ( $1, $2, $3, NOW(), NOW()) RETURNING album_id;`,
+            [albumName, description, userId]
         );
 
         return BizResult.success('', '新增相册成功');

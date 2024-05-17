@@ -47,19 +47,21 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                             name: '图片上传',
                             icon: <TabletOutlined/>,
                             path: '/',
-                            component: './ListTableList',
                         },
                         {
                             path: '/admin',
                             name: '管理页',
                             icon: <CrownOutlined/>,
-                            access: 'canAdmin',
                             routes: [
                                 {
                                     path: '/tokenManage',
                                     name: 'token管理',
                                     icon: <CrownOutlined/>,
-                                    component: './Welcome',
+                                },
+                                {
+                                    path: '/albumManage',
+                                    name: '相册管理',
+                                    icon: <CrownOutlined/>,
                                 }
                             ],
                         },

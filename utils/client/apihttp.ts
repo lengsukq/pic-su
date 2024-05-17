@@ -57,3 +57,11 @@ interface deleteTokenParams {
 export async function deleteToken(params:deleteTokenParams) {
     return post(`/api/tokenManage/deleteToken`, params);
 }
+
+export async function getAlbumList(params:{
+    albumName?:string,
+    current:number,
+    pageSize:number
+}) {
+    return post(`/api/albumManage/getList`, params);
+}
