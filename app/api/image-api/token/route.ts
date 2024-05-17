@@ -44,6 +44,7 @@ export async function POST(req:NextRequest) {
         const fileData = {file, base64,bedType}
         // console.log('图片上传接口',fileData)
         const {msg, url} = await upImgMain(fileData);
+        // 上传失败返回失败信息
         if (msg!=='上传成功'){
             return BizResult.fail(msg);
         }

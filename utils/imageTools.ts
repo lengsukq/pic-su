@@ -65,7 +65,7 @@ export async function upImgByBilibiliDaily({file}:any) {
         // return response.json();
         if (!response.ok) {
             console.log('response', response)
-            return {msg: '上传失败，请检查哔哩哔哩专栏图片参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg', error: response} // 返回默认图片链接
+            return {msg: '上传失败，请检查哔哩哔哩动态/专栏图片参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg', error: response} // 返回默认图片链接
         }
 
         const data = await response.json();
