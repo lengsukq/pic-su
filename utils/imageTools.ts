@@ -30,7 +30,7 @@ export async function upImgBySM({file}:any) {
         if (!response.ok) {
             console.log('response', response)
 
-            return {msg: '上传失败，使用默认图片', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+            return {msg: '上传失败，请检查SM图床Token是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
         }
 
         const data = await response.json();
@@ -38,7 +38,7 @@ export async function upImgBySM({file}:any) {
         return {msg: '上传成功', url: data.data.url}; // 返回获取到的图片链接
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
-        return {msg: '上传失败，使用默认图片', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+        return {msg: '上传失败', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
     }
 }
 
@@ -65,7 +65,7 @@ export async function upImgByBilibiliDaily({file}:any) {
         // return response.json();
         if (!response.ok) {
             console.log('response', response)
-            return {msg: '上传失败，使用默认图片', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+            return {msg: '上传失败，请检查哔哩哔哩专栏图片参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg', error: response} // 返回默认图片链接
         }
 
         const data = await response.json();
@@ -73,7 +73,7 @@ export async function upImgByBilibiliDaily({file}:any) {
         return {msg: '上传成功', url: data.data.image_url}; // 返回获取到的图片链接
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
-        return {msg: '上传失败，使用默认图片', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+        return {msg: '系统异常', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
 
     }
 }
@@ -95,7 +95,7 @@ export async function upImgByBilibiliCover({base64}:any) {
         // return response.json();
         if (!response.ok) {
             console.log('response', response)
-            return {msg: '上传失败，使用默认图片', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+            return {msg: '上传失败，请检查哔哩哔哩视频封面参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg',} // 返回默认图片链接
         }
 
         const data = await response.json();
@@ -103,7 +103,7 @@ export async function upImgByBilibiliCover({base64}:any) {
         return {msg: '上传成功', url: data.data.url}; // 返回获取到的图片链接
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
-        return {msg: '上传失败，使用默认图片', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+        return {msg: '系统异常', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
 
     }
 }
@@ -121,7 +121,7 @@ export async function upImgByImgBB({file}:any) {
         if (!response.ok) {
             console.log('response', response)
 
-            return {msg: '上传失败，使用默认图片', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+            return {msg: '上传失败，请检查imgBB图床API是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
         }
 
         const data = await response.json();
@@ -129,6 +129,6 @@ export async function upImgByImgBB({file}:any) {
         return {msg: '上传成功', url: data.data.url}; // 返回获取到的图片链接
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
-        return {msg: '上传失败，使用默认图片', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+        return {msg: '系统异常', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
     }
 }

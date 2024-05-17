@@ -44,7 +44,9 @@ export async function POST(req:NextRequest) {
         const fileData = {file, base64,bedType}
         // console.log('图片上传接口',fileData)
         const {msg, url} = await upImgMain(fileData);
-
+        if (msg!=='上传成功'){
+            return BizResult.fail(msg);
+        }
         // 更新使用的token，tokens表中的usage_limit 减1 current_usage加1
         await query(
             `UPDATE tokens SET usage_limit = usage_limit - 1, current_usage = current_usage + 1 WHERE token = $1`,
