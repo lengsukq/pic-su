@@ -8,7 +8,7 @@ export async function POST(req:NextRequest) {
     try {
         const {user_id:userId} = await verifyAuth(req)
         const jsonData = await req.json();
-        const {tokenName, status, usageLimit,expiresAt,description,tokenId} = jsonData;
+        const {tokenName, status, usageLimit,expiresAt,description,tokenId,albumPermissions} = jsonData;
         // 参数有效性检查
         if (!tokenName || !status || !usageLimit || !expiresAt) {
             // 参数不完整
@@ -17,9 +17,9 @@ export async function POST(req:NextRequest) {
             return BizResult.validateFailed('', '状态不正确');
         }
 
-        const result = await query(
-            'UPDATE tokens SET expires_at = $3, token_name = $4, status = $5, usage_limit = $6, description = $7 WHERE user_id = $1 AND token_id = $2',
-            [userId,tokenId, expiresAt, tokenName, status, usageLimit, description]
+        await query(
+            'UPDATE tokens SET expires_at = $3, token_name = $4, status = $5, usage_limit = $6, description = $7, album_permissions = $8 WHERE user_id = $1 AND token_id = $2',
+            [userId, tokenId, expiresAt, tokenName, status, usageLimit, description, albumPermissions || []]
         );
 
         return BizResult.success('', '修改token信息成功');

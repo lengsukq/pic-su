@@ -34,7 +34,8 @@ export async function addToken(params: {
     tokenName: string;
     description: string;
     expiresAt: string;
-    status: string
+    status: string;
+    albumPermissions:string | null
 }) {
     return post(`/api/tokenManage/addToken`, params);
 }
@@ -45,7 +46,8 @@ interface editTokenParams {
     tokenName: string,
     status: string,
     usageLimit: number,
-    description: string
+    description: string,
+    albumPermissions:string | null
 }
 export async function editToken(params:editTokenParams) {
     return post(`/api/tokenManage/editToken`, params);

@@ -14,7 +14,8 @@ type DataSourceType = {
     description?: string,
     status?: string,
     usage_limit?: number,
-    current_usage?: number
+    current_usage?: number,
+    album_permissions?:string | null
 };
 const Page: React.FC = () => {
     const {message} = App.useApp();
@@ -34,15 +35,14 @@ const Page: React.FC = () => {
                     rules:[{ required: true, message: '请输入token名称' }]
                 };
             },
-            width: '15%',
         },
         {
             title: 'token',
             dataIndex: 'token',
             tooltip: '请勿随意泄漏你的token',
             readonly: true,
-            width: '15%',
             hideInSearch: true,
+            ellipsis: true,
             render: (text, record) => [
                 <a  key='token'
                     onClick={() => {
@@ -83,7 +83,10 @@ const Page: React.FC = () => {
             tooltip: '为空则拥有所有相册权限',
             valueType: 'select',
             hideInSearch: true,
-            request:()=> getAlbumListAct()
+            request:()=> getAlbumListAct(),
+            fieldProps:{
+                mode: 'multiple'
+            }
         },
         {
             title: '描述',
@@ -128,7 +131,6 @@ const Page: React.FC = () => {
         {
             title: '操作',
             valueType: 'option',
-            width: 200,
             render: (text, record, _, action) => [
                 <a
                     key="editable"
@@ -197,7 +199,10 @@ const Page: React.FC = () => {
                 recordCreatorProps={
                     {
                         position: 'top',
-                        record: () => ({ token_id: (Math.random() * 1000000).toFixed(0) }),
+                        record: () => (
+
+                            { token_id: (Math.random() * 1000000).toFixed(0) }
+                        ),
                     }
                 }
                 loading={false}
@@ -258,10 +263,12 @@ const Page: React.FC = () => {
                     type: 'multiple',
                     editableKeys,
                     onSave: async (rowKey, data, row) => {
-                        console.log('onSave',rowKey, data, row);
+                        // row是老数据
+                        // console.log('onSave',rowKey, data, row);
                         if (data.token){
                             await editToken({
-                                tokenId: row.token_id as number,
+                                albumPermissions: data.album_permissions as string | null,
+                                tokenId: data.token_id as number,
                                 tokenName: data.token_name as string,
                                 description: data.description as string,
                                 expiresAt: data.expires_at as string,
@@ -274,6 +281,7 @@ const Page: React.FC = () => {
                             });
                         }else{
                             await addToken({
+                                albumPermissions: data.album_permissions as string | null,
                                 tokenName: data.token_name as string,
                                 description: data.description as string || "",
                                 expiresAt: data.expires_at as string,

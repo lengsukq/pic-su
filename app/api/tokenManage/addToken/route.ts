@@ -9,9 +9,9 @@ export async function POST(req: NextRequest) {
     try {
         const {user_id: userId} = await verifyAuth(req)
         const jsonData = await req.json();
-        const {tokenName, status, usageLimit, expiresAt, description} = jsonData;
+        const {tokenName, status, usageLimit, expiresAt, description,albumPermissions} = jsonData;
         // 参数有效性检查
-        if (!tokenName || !status || !expiresAt) {
+        if (!tokenName || !status || !expiresAt || !albumPermissions) {
             // 参数不完整
             return BizResult.validateFailed('', '参数不完整');
         } else if (status !== 'enable' && status !== 'disable') {
@@ -24,9 +24,11 @@ export async function POST(req: NextRequest) {
         }
         // 调用函数，生成一个32字节长度的token
         const token = generateRandomToken(32);
-        const result = await query(
-            `INSERT INTO tokens(user_id, token, created_at, expires_at,token_name,status,usage_limit,description) VALUES($1, $2,NOW(),$3,$4,$5,$6,$7) RETURNING token_id`,
-            [userId, token, expiresAt, tokenName, status, usageLimit, description]
+        await query(
+            `INSERT INTO tokens(user_id, token, created_at, expires_at, token_name, status, usage_limit, description, album_permissions) 
+                VALUES($1, $2, NOW(), $3, $4, $5, $6, $7, $8) 
+                RETURNING token_id`,
+            [userId, token, expiresAt, tokenName, status, usageLimit, description, albumPermissions || []]
         );
 
         return BizResult.success('', '新增token成功');
