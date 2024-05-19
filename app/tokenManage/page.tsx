@@ -1,13 +1,9 @@
 'use client'
-import type { ProColumns } from '@ant-design/pro-components';
-import {
-    EditableProTable,
-    ProCard,
-    ProFormField,
-} from '@ant-design/pro-components';
-import React, {useState,useRef} from 'react';
-import {addToken, deleteToken, editToken, getTokensList} from "@/utils/client/apihttp";
-import {Form, Input, App} from "antd";
+import type {ProColumns} from '@ant-design/pro-components';
+import {EditableProTable, ProCard, ProFormField,} from '@ant-design/pro-components';
+import React, { useRef, useState} from 'react';
+import {addToken, deleteToken, editToken, getAlbumList, getTokensList} from "@/utils/client/apihttp";
+import {App, Form, Input} from "antd";
 
 type DataSourceType = {
     token_id: React.Key,
@@ -79,6 +75,15 @@ const Page: React.FC = () => {
                     rules:[{ required: true, message: '请选择状态' }]
                 };
             },
+        },
+        {
+            title: '相册权限',
+            key: 'album_permissions',
+            dataIndex: 'album_permissions',
+            tooltip: '为空则拥有所有相册权限',
+            valueType: 'select',
+            hideInSearch: true,
+            request:()=> getAlbumListAct()
         },
         {
             title: '描述',
@@ -165,6 +170,21 @@ const Page: React.FC = () => {
         document.body.removeChild(input);
         message.success('复制成功')
     };
+    // 获取相册数据
+    const getAlbumListAct = async () => {
+        try {
+            const res = await getAlbumList({current: 1, pageSize: 10000000})
+            if (res.code === 200) {
+                return res.data.record.map((item: any) => ({
+                    value: item.album_id,
+                    label: item.album_name,
+                }));
+            }
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
     return (
         <>
             <EditableProTable<DataSourceType>
@@ -238,7 +258,7 @@ const Page: React.FC = () => {
                     type: 'multiple',
                     editableKeys,
                     onSave: async (rowKey, data, row) => {
-                        // console.log('onSave',rowKey, data, row);
+                        console.log('onSave',rowKey, data, row);
                         if (data.token){
                             await editToken({
                                 tokenId: row.token_id as number,

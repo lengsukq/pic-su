@@ -28,7 +28,7 @@ const Page: React.FC = () => {
         try {
             const res = await getAlbumList({current: 1, pageSize: 10})
             if (res.code === 200) {
-                console.log('getAlbumList', res)
+                // console.log('getAlbumList', res)
                 setData(res.data.record);
             }
 
