@@ -58,6 +58,15 @@ export async function POST(req: NextRequest) {
                 console.log('token无权限上传该相册',info.album_permissions,albumId)
                 return BizResult.fail("token无权限上传该相册");
             }
+        }else{
+            // 通过album_id、album_name、user_id查询相册是否存在
+            const albumExistResult = await query(
+                `SELECT * FROM albums WHERE (album_id = $1 OR album_name = $2) AND user_id = $3`,
+                [albumId,albumName, info.user_id]
+            );
+            if (!albumExistResult.rows.length) {
+                return BizResult.fail("相册不存在");
+            }
         }
         const fileData = {file, base64, bedType}
         // console.log('图片上传接口',fileData)
