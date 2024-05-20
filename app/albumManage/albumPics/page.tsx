@@ -44,7 +44,7 @@ const Page: React.FC = () => {
             const res = await deletePic({imageId: item.image_id})
             if (res.code === 200) {
                 message.success('删除成功')
-                getAlbumPicsAct()
+                await getAlbumPicsAct()
             }
 
         } catch (error) {
