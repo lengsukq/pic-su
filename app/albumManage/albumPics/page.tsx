@@ -76,13 +76,14 @@ const Page: React.FC = () => {
                             actions={[
                                 <CopyTwoTone key="copy" onClick={() => clickToCopy(item.url)}/>,
                                 <Popconfirm
+                                    key="delete"
                                     title="提示"
                                     description="确定删除该图片吗？"
                                     onConfirm={() => deletePicAct(item)}
                                     okText="确认"
                                     cancelText="取消"
                                 >
-                                    <DeleteTwoTone key="delete"/>
+                                    <DeleteTwoTone/>
                                 </Popconfirm>
                             ]}
                         >
