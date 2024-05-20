@@ -10,11 +10,11 @@ export async function POST(req: NextRequest) {
         const formData = await req.formData();
         const token: string = <string>formData.get('token');
         const file: File = <File>formData.get('file');
-        const albumId = <string>formData.get('albumId');
+        const albumId = formData.get('albumId');
         const base64: string = <string>formData.get('base64');
         const bedType = <"SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB">formData.get('bedType') || process.env.NEXT_PUBLIC_DEFAULT_BED;
         // 参数有效性检查
-        if (!bedType || !token || !albumId) {
+        if (!bedType || !token || !albumId || !(file || base64)) {
             // 参数不完整
             return BizResult.validateFailed('', '参数不完整');
         }
@@ -67,6 +67,5 @@ export async function POST(req: NextRequest) {
     } catch (err) {
         console.log('err', err)
         return BizResult.fail("图片上传失败");
-
     }
 }

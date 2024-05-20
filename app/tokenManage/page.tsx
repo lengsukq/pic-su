@@ -4,7 +4,7 @@ import {EditableProTable, ProCard, ProFormField,} from '@ant-design/pro-componen
 import React, { useRef, useState} from 'react';
 import {addToken, deleteToken, editToken, getAlbumList, getTokensList} from "@/utils/client/apihttp";
 import {App, Form, Input} from "antd";
-
+import {copyToClipboard} from "@/utils/client/tools"
 type DataSourceType = {
     token_id: React.Key,
     token?: string,
@@ -47,7 +47,7 @@ const Page: React.FC = () => {
                 <a  key='token'
                     onClick={() => {
                         // 点击事件处理逻辑
-                        copyToClipboard(record.token as string)
+                        clickToCopy(record.token as string)
                     }}
                 >
                     {record.token}
@@ -163,13 +163,8 @@ const Page: React.FC = () => {
         },
     ];
     // 传入val值复制到剪贴板
-    const copyToClipboard = (val: string) => {
-        const input = document.createElement('input');
-        input.value = val;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand('copy');
-        document.body.removeChild(input);
+    const clickToCopy = (val: string) => {
+        copyToClipboard(val)
         message.success('复制成功')
     };
     // 获取相册数据

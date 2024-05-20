@@ -67,3 +67,13 @@ export async function getAlbumList(params:{
 }) {
     return post(`/api/albumManage/getList`, params);
 }
+
+// 获取相册图片
+export interface getAlbumPicsParams {
+    albumId?:string,
+    current:number,
+    pageSize:number
+}
+export async function getAlbumPics(params:getAlbumPicsParams) {
+    return post(`/api/albumManage/getAlbumPics`, params);
+}

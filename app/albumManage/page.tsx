@@ -1,14 +1,17 @@
 'use client'
 import React, {useState, useEffect} from 'react';
 import {EditOutlined, EllipsisOutlined, SettingOutlined} from '@ant-design/icons';
-import {Avatar, Card} from 'antd';
+import {Card} from 'antd';
 import {getAlbumList} from "@/utils/client/apihttp";
-import {Col, Row} from 'antd';
+import {Col, Row,Statistic} from 'antd';
+import {useRouter} from "next/navigation";
+import {convertDateFormat} from "@/utils/client/tools";
 
 const {Meta} = Card;
 
 // 假设你的数据类型是这样的
 interface Item {
+    image_count:string;
     album_name: string;
     description: string;
     album_id: string;
@@ -18,8 +21,12 @@ interface Item {
 }
 
 const Page: React.FC = () => {
-    const [data, setData] = useState<Item[]>([]);
+    const router = useRouter()
 
+    const [data, setData] = useState<Item[]>([]);
+    const checkPics= (item: { album_id: string })=>{
+        router.push(`/albumManage/albumPics?albumId=${item.album_id}`)
+    }
     useEffect(() => {
         getAlbumListAct();
     }, []); // 空数组表示这个effect只在组件挂载时运行一次
@@ -48,7 +55,7 @@ const Page: React.FC = () => {
 
                 {data.map(item => (
                     <Col className="gutter-row" span={4} key={item.album_id} xs={24} md={12} lg={8} xl={4}>
-                        <Card
+                        <Card onClick={() => checkPics(item)}
                             // style={{width: 300, marginBottom: 20}}
                             cover={
                                 <img
@@ -63,7 +70,9 @@ const Page: React.FC = () => {
                             ]}
                         >
                             <Meta
-                                avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8"/>}
+                                avatar={
+                                    <Statistic title={convertDateFormat(item.created_at)} value={item.image_count} valueStyle={{fontSize:'16px'}} suffix="/无限" prefix={<></>} />
+                                }
                                 title={item.album_name} // 使用列表项的数据
                                 description={item.description} // 使用列表项的数据
                             />

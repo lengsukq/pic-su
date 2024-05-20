@@ -22,6 +22,8 @@ export default function RootLayout({
     return (
         <html lang="cn">
         <body className={inter.className}>
+        {/*b站图片显示meta*/}
+        <meta name="referrer" content="no-referrer"/>
         <ConfigProvider>
             <App>
                 <MenuContainer>
