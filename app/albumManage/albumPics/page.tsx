@@ -1,10 +1,11 @@
 'use client'
 import React, {useState, useEffect} from 'react';
-import {Image, Card, App} from 'antd';
-import { getAlbumPics} from "@/utils/client/apihttp";
+import {Image, Card, App, Popconfirm} from 'antd';
+import {deletePic, getAlbumPics} from "@/utils/client/apihttp";
 import {Col, Row} from 'antd';
 import {useSearchParams} from "next/navigation";
 import {convertDateFormat, copyToClipboard} from "@/utils/client/tools";
+import {CopyTwoTone, DeleteTwoTone} from "@ant-design/icons";
 
 const {Meta} = Card;
 
@@ -37,6 +38,19 @@ const Page: React.FC = () => {
             console.error('Error fetching data:', error);
         }
     };
+
+    const deletePicAct = async (item: Item) => {
+        try {
+            const res = await deletePic({imageId: item.image_id})
+            if (res.code === 200) {
+                message.success('删除成功')
+                getAlbumPicsAct()
+            }
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
     const {message} = App.useApp();
 
     const clickToCopy = (val: string) => {
@@ -57,12 +71,24 @@ const Page: React.FC = () => {
                         <Card
                             hoverable
                             cover={
-                            <Image alt={item.created_at} src={item.url} />
+                            <Image alt={item.created_at} src={item.url} className={'object-cover'} height={120} />
                         }
+                            actions={[
+                                <CopyTwoTone key="copy" onClick={() => clickToCopy(item.url)}/>,
+                                <Popconfirm
+                                    title="提示"
+                                    description="确定删除该图片吗？"
+                                    onConfirm={() => deletePicAct(item)}
+                                    okText="确认"
+                                    cancelText="取消"
+                                >
+                                    <DeleteTwoTone key="delete"/>
+                                </Popconfirm>
+                            ]}
                         >
                             <Meta
                                 title={`上传于-${convertDateFormat(item.created_at)}`} description={
-                                <div className={'cursor-pointer'} onClick={() => clickToCopy(item.url)}>
+                                <div className={'cursor-pointer text-ellipsis overflow-hidden'} onClick={() => clickToCopy(item.url)}>
                                     {item.url}
                                 </div>
                             }/>

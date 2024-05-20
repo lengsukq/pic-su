@@ -77,3 +77,10 @@ export interface getAlbumPicsParams {
 export async function getAlbumPics(params:getAlbumPicsParams) {
     return post(`/api/albumManage/getAlbumPics`, params);
 }
+// 删除token
+interface deletePicParams {
+    imageId: number,
+}
+export async function deletePic(params:deletePicParams) {
+    return post(`/api/albumManage/deletePic`, params);
+}
