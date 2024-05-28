@@ -1,6 +1,8 @@
+
+
 interface FileData {
     file: any;
-    bedType: "SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB";
+    bedType: "SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB" | "TG";
     base64: string;
 }
 export async function upImgMain(fileData:FileData) {
@@ -9,6 +11,8 @@ export async function upImgMain(fileData:FileData) {
         "BilibiliDaily": (fileData:any) => upImgByBilibiliDaily(fileData), // 哔哩哔哩动态/专栏
         "BilibiliCover": (fileData:any) => upImgByBilibiliCover(fileData), // 哔哩哔哩视频封面
         "IMGBB": (fileData:any) => upImgByImgBB(fileData), // IMGBB 图床
+        "TG": (fileData:any) => upImgByTelegraph(fileData), //  telegraph图床
+
     }
     return await upImgObj[`${fileData.bedType}`](fileData);
 }
@@ -130,5 +134,28 @@ export async function upImgByImgBB({file}:any) {
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
         return {msg: '系统异常', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+    }
+}
+async function upImgByTelegraph({file}:any) {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+        const response = await fetch('https://proxy-all.lengsu.top/https://telegra.ph/upload', {
+            method: 'POST',
+            body: formData,
+        });
+        // return response.json();
+        if (!response.ok) {
+            console.log('response', response)
+
+            return {msg: '上传失败，请检查SM图床Token是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+        }
+
+        const data = await response.json();
+        console.log('TG', data);
+        return {msg: '上传成功', url: `https://proxy-all.lengsu.top/https://telegra.ph/${data[0].src}`}; // 返回获取到的图片链接
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        return {msg: '上传失败', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
     }
 }

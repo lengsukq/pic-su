@@ -40,20 +40,22 @@ export async function POST(req: NextRequest) {
         if (currentDate > expiresAt) return BizResult.fail("token已失效");
         if (info.status !== 'enable') return BizResult.fail("token已禁用");
         if (info.usage_limit <= 0) return BizResult.fail("token次数已用完");
+        // 如果只填了album_name，则通过album_name、user_id查询相册album_id
+        if (albumName){
+            // 通过album_name、user_id查询相册album_id
+            const albumResult = await query(
+                `SELECT * FROM albums WHERE album_name = $1 AND user_id = $2`,
+                [albumName, info.user_id]
+            );
+            if (!albumResult.rows.length) {
+                return BizResult.fail("相册不存在");
+            }else{
+                albumId = albumResult.rows[0].album_id;
+                console.log('获取到相册id', albumId)
+            }
+        }
         // album_permissions为[]时，不限制上传相册id
         if (info.album_permissions.length!==0){
-            if (albumName){
-                // 通过album_name、user_id查询相册album_id
-                const albumResult = await query(
-                    `SELECT * FROM albums WHERE album_name = $1 AND user_id = $2`,
-                    [albumName, info.user_id]
-                );
-                if (!albumResult.rows.length) {
-                    return BizResult.fail("相册不存在");
-                }else{
-                    albumId = albumResult.rows[0].album_id;
-                }
-            }
             if (!info.album_permissions.includes(Number(albumId))) {
                 console.log('token无权限上传该相册',info.album_permissions,albumId)
                 return BizResult.fail("token无权限上传该相册");
