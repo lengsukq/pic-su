@@ -15,29 +15,22 @@ import { Modal } from 'antd';
 import {loginApi, userRegister} from "@/utils/client/apihttp";
 type LoginType = 'register' | 'account';
 
-const Login = () => {
+const Login: React.FC<{login:Function}> = ({login}) => {
     const { token } = theme.useToken();
     const [loginType, setLoginType] = useState<LoginType>('account');
-    const login = async (val:any)=>{
-        loginApi(val).then((res)=>{
-            if (res.code===200){
-                message.success(res.msg);
-            }
-        })
-    }
     const register =async (val:any)=>{
         userRegister(val).then((res)=>{
             if (res.code===200){
                 message.success(res.msg);
+                setLoginType('account')
             }
         })
     }
-
     return (
         <ProConfigProvider hashed={false}>
             <div style={{ backgroundColor: token.colorBgContainer }}>
                 <LoginForm
-                    onFinish={loginType==='account'?login:register}
+                    onFinish={loginType==='account'?(val)=>login(val):(val)=>register(val)}
                     logo="https://i.ibb.co/bKN1t8J/b-39d762806a8d59b0015a4c98927abaf8.jpg"
                     title="Pic-Su"
                     subTitle="一站式图片管理平台"
@@ -159,6 +152,15 @@ const UserLogin: React.FC<{
         console.log('Clicked cancel button');
         onChange(false);
     };
+    const login = async (val:any)=>{
+        loginApi(val).then((res)=>{
+            if (res.code===200){
+                message.success(res.msg);
+                onChange(false);
+            }
+        })
+
+    }
 
     return (
         <>
@@ -170,7 +172,7 @@ const UserLogin: React.FC<{
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
             >
-                <Login/>
+                <Login login={login}/>
             </Modal>
         </>
     );
