@@ -84,3 +84,6 @@ interface deletePicParams {
 export async function deletePic(params:deletePicParams) {
     return post(`/api/albumManage/deletePic`, params);
 }
+export async function getUserInfo() {
+    return post(`/api/user/getUserInfo`);
+}

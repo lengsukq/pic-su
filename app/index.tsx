@@ -6,16 +6,24 @@ import {
 import UserLogin from "@/components/userLogin"
 import React, {useState} from 'react';
 import dynamic from "next/dynamic";
-import {logout} from "@/utils/client/apihttp";
+import {getUserInfo, logout} from "@/utils/client/apihttp";
 import {message} from "antd";
 import {useRouter} from "next/navigation";
+import UserInfo from "@/components/userInfo";
 const ProLayout = dynamic(
     () => import("@ant-design/pro-components").then((com) => com.ProLayout),
     {ssr: false}
 );
+export interface UserInfoInter {
+    username: string;
+    email: string;
+}
 export default function MenuContainer({children}: Readonly<{ children: React.ReactNode; }>) {
     const [pathname, setPathname] = useState('/welcome');
     const [openLogin, setOpenLogin] = useState(false);
+    const [openUserInfo, setOpenUserInfo] = useState(false);
+
+    const [userInfo,setUserInfo] = useState<UserInfoInter>({email: "", username: ""})
     const logoutAct =async () => {
         console.log('退出')
         await logout().then((res)=>{
@@ -29,7 +37,7 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
     return (
         <>
         <UserLogin openLogin={openLogin} onChange={(e: boolean)=>setOpenLogin(e)}/>
-
+        <UserInfo openUserInfo={openUserInfo} setOpenUserInfo={(e: boolean)=>setOpenUserInfo(e)} userInfo={userInfo}/>
         <div
             id="test-pro-layout"
             style={{
@@ -75,7 +83,14 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
                     size: 'small',
                     title: 'Pic-Su',
                     onClick: () => {
-                        setOpenLogin(true)
+                        getUserInfo().then(res=>{
+                            if (res.code===200){
+                                setUserInfo(res.data)
+                                setOpenUserInfo(true)
+                            }else {
+                                setOpenLogin(true)
+                            }
+                        })
                     },
                 }}
                 actionsRender={() => [
