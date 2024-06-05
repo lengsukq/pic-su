@@ -26,7 +26,8 @@ export const config = {
          * - favicon.ico (favicon file)
          */
         // '/api/image-api/((?!token))',
-        '/api/((?!user)(?!image-api/token).*)',
+        // '/api/((?!user)(?!image-api/token).*)',
+        '/api/((?!user/login)(?!user/register)(?!image-api/token).*)',
         // '/((?!/uuuu|_next/static|_next/image|favicon.ico).*)',
 
     ],

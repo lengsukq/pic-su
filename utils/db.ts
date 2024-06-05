@@ -13,7 +13,7 @@ interface Config {
     };
 }
 
-let configs: Config = {};
+let configs: Config;
 
 // 如果DATABASE_URL环境变量存在，使用connectionString
 if (process.env.DATABASE_URL) {
@@ -30,9 +30,6 @@ if (process.env.DATABASE_URL) {
         database: process.env.DB_NAME as string,
         password: process.env.DB_PASSWORD as string,
         port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
-        ssl: {
-            rejectUnauthorized: false // 如果你使用的是自签名证书或内部证书颁发机构，你可能需要设置这个选项为false
-        }
     };
 }
 

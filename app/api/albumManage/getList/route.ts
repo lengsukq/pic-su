@@ -19,11 +19,6 @@ export async function POST(req: NextRequest) {
             'SELECT COUNT(*) FROM albums WHERE user_id = $1;',
             [userId]
         );
-        // // 查询当前页数据
-        // const result = await query(
-        //     'SELECT * FROM albums WHERE user_id = $1 AND ($2 = \'\' OR album_name ILIKE $2) ORDER BY album_id ASC LIMIT $3 OFFSET $4;',
-        //     [userId, `%${albumName || ""}%`, pageSize, offset] // 使用参数化查询防止 SQL 注入
-        // );
         // 查询当前页数据，联合images表查询
         const result = await query(
             `SELECT albums.*, COUNT(images.image_id) AS image_count
