@@ -3,9 +3,9 @@ import BizResult from "@/utils/BizResult";
 import {upImgMain} from "@/utils/imageTools";
 import {NextRequest} from 'next/server'
 import {query} from "@/utils/db";
-
 export async function POST(req: NextRequest) {
     try {
+
         //multipart/form-data;
         const formData = await req.formData();
         const token: string = <string>formData.get('token');
@@ -71,8 +71,9 @@ export async function POST(req: NextRequest) {
             }
         }
         const fileData = {file, base64, bedType}
-        // console.log('图片上传接口',fileData)
-        const {msg, url} = await upImgMain(fileData);
+        const user = await query('SELECT * FROM users WHERE user_id = $1', [info.user_id]);
+
+        const {msg, url} = await upImgMain(fileData, user.rows[0]);
         // 上传失败返回失败信息
         if (msg !== '上传成功') {
             return BizResult.fail(msg);

@@ -2,9 +2,12 @@
 import BizResult from "@/utils/BizResult";
 import {upImgMain} from "@/utils/imageTools";
 import { NextRequest } from 'next/server'
+import {verifyAuth} from "@/utils/auth/auth";
 
 export async function POST(req:NextRequest) {
     try {
+        const userInfo = await verifyAuth(req)
+
         //multipart/form-data;
         const formData = await req.formData();
         const file:File = <File>formData.get('file');
@@ -19,7 +22,7 @@ export async function POST(req:NextRequest) {
 
         const fileData = {file, base64,bedType}
         // console.log('图片上传接口',fileData)
-        const {msg, url} = await upImgMain(fileData);
+        const {msg, url} = await upImgMain(fileData,userInfo);
         return BizResult.success({url: url}, msg);
     } catch (err) {
         console.log('err', err)

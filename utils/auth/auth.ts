@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid'
 import { SignJWT, jwtVerify } from 'jose'
 import { USER_TOKEN, getJwtSecretKey } from './constants'
 
-interface UserJwtPayload {
+export interface UserJwtPayload {
     jti: string
     iat: number
     user_id?: number
@@ -12,6 +12,11 @@ interface UserJwtPayload {
     email?: string
     created_at?: string
     updated_at?: string
+    SM_TOKEN: string
+    IMGBB_API: string
+    BILIBILI_SESSDATA: string
+    BILIBILI_CSRF: string
+    TG_URL: string
 }
 
 export class AuthError extends Error {}
@@ -29,7 +34,7 @@ export async function verifyAuth(req: NextRequest) {
             token,
             new TextEncoder().encode(getJwtSecretKey())
         )
-        return verified.payload as UserJwtPayload
+        return verified.payload as unknown as UserJwtPayload
     } catch (err) {
         throw new AuthError('Your token has expired.')
     }
