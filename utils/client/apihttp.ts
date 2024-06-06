@@ -1,4 +1,4 @@
-import {deleteAct, get, post} from "./fetchUtil";
+import {get, post} from "./fetchUtil";
 interface LoginParams {
     username: string;
     password: string;
@@ -81,9 +81,26 @@ export async function getAlbumPics(params:getAlbumPicsParams) {
 interface deletePicParams {
     imageId: number,
 }
+// 删除图片
 export async function deletePic(params:deletePicParams) {
     return post(`/api/albumManage/deletePic`, params);
 }
+// 获取用户信息
 export async function getUserInfo() {
     return post(`/api/user/getUserInfo`);
+}
+export interface UserInfoInter {
+    username: string;
+    email: string;
+    created_at:string;
+    updated_at:string;
+    SM_TOKEN:string | null;
+    BILIBILI_SESSDATA:string | null;
+    BILIBILI_CSRF:string | null;
+    IMGBB_API:string | null;
+    TG_URL:string | null;
+}
+// 修改用户信息
+export async function editUserInfo(params:UserInfoInter) {
+    return post(`/api/user/editUserInfo`, params);
 }

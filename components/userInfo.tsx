@@ -1,20 +1,12 @@
 import {
     ModalForm,
     ProForm,
-    ProFormDateRangePicker,
     ProFormText,
 } from '@ant-design/pro-components';
 import {  Form, message } from 'antd';
-import React, {FormEventHandler, useEffect, useRef} from "react";
-import type { ProFormInstance } from '@ant-design/pro-components';
-import {UserInfoInter} from '@/app'
-const waitTime = (time: number = 100) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time);
-    });
-};
+import React, {useRef} from "react";
+import { ProFormInstance,ProFormDatePicker} from '@ant-design/pro-components';
+import {editUserInfo, UserInfoInter} from "@/utils/client/apihttp";
 
 const UserInfo: React.FC<{
     openUserInfo: boolean,
@@ -24,17 +16,12 @@ const UserInfo: React.FC<{
     console.log('userInfo',userInfo)
     const [form] = Form.useForm<UserInfoInter>();
     const formRef = useRef<ProFormInstance>();
-    useEffect(()=>{
-        formRef?.current?.setFieldsValue({
-            username: userInfo.username,
-            email: userInfo.email,
-        });
-    },[userInfo])
     const onOpenChange = (e:boolean)=>{
         setOpenUserInfo(e)
     }
     return (
         <ModalForm<UserInfoInter>
+            request={()=> Promise.resolve(userInfo)}
             formRef={formRef}
             title="用户信息"
             open={openUserInfo}
@@ -47,14 +34,17 @@ const UserInfo: React.FC<{
             }}
             submitTimeout={2000}
             onFinish={async (values) => {
-                await waitTime(2000);
-                console.log(values);
-                message.success('提交成功');
-                return true;
+                editUserInfo(values).then(res=>{
+                    if(res.code === 200){
+                        message.success('用户信息编辑成功');
+                        return true;
+                    }
+                })
             }}
         >
             <ProForm.Group>
                 <ProFormText
+                    disabled
                     width="md"
                     name="username"
                     label="用户名"
@@ -63,6 +53,7 @@ const UserInfo: React.FC<{
                 />
 
                 <ProFormText
+                    disabled
                     width="md"
                     name="email"
                     label="用户邮箱"
@@ -70,13 +61,56 @@ const UserInfo: React.FC<{
                 />
             </ProForm.Group>
             <ProForm.Group>
-                <ProFormText
+                <ProFormDatePicker
+                    disabled
                     width="md"
-                    name="contract"
-                    label="合同名称"
-                    placeholder="请输入名称"
+                    label="注册时间"
+                    name="created_at"
                 />
-                <ProFormDateRangePicker name="contractTime" label="合同生效时间" />
+                <ProFormDatePicker
+                    disabled
+                    width="md"
+                    label="更新日期"
+                    name="updated_at"
+                />
+            </ProForm.Group>
+            <ProForm.Group>
+                <ProFormText.Password
+                    width="md"
+                    name="SM_TOKEN"
+                    label="SM图床Token"
+                    placeholder="请输入SM图床Token"
+                />
+
+                <ProFormText.Password
+                    width="md"
+                    name="IMGBB_API"
+                    label="IMGBB图床API"
+                    placeholder="请输入IMGBB图床API"
+                />
+            </ProForm.Group>
+            <ProForm.Group>
+                <ProFormText.Password
+                    width="md"
+                    name="BILIBILI_SESSDATA"
+                    label="B站登录SESSDATA"
+                    placeholder="请输入B站登录SESSDATA"
+                />
+
+                <ProFormText.Password
+                    width="md"
+                    name="BILIBILI_CSRF"
+                    label="B站登录CSRF"
+                    placeholder="请输入B站登录CSRF"
+                />
+            </ProForm.Group>
+            <ProForm.Group>
+                <ProFormText.Password
+                    width="md"
+                    name="TG_URL"
+                    label="Telegra的（代理）地址"
+                    placeholder="请输入Telegra的（代理）地址"
+                />
             </ProForm.Group>
         </ModalForm>
     );

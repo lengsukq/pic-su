@@ -18,8 +18,8 @@ const checkStatus = (res:Response) => {
 
 /**
  *  捕获成功登录过期状态码等
- * @param res:Response
  * @returns {*}
+ * @param res
  */
 const judgeOkState = async (res:Response) => {
     const cloneRes = await res.clone().json();
@@ -42,10 +42,7 @@ interface ResponseError {
  * @param error
  */
 const handleError = (error: Error): ResponseError => {
-    if (error instanceof TypeError) {
-        message.error(`网络请求失败,${error}`);
-
-    }
+    message.error(`网络请求失败,${error}`);
     return {   //防止页面崩溃，因为每个接口都有判断res.code以及data
         code: -1,
         data: false,
@@ -107,18 +104,21 @@ class http {
      */
     post(url:string, params = {}, option:optionsInterface = {}) {
         const options = Object.assign({ method: 'POST' }, option);
-
-        //可以是上传键值对形式，也可以是文件，使用append创造键值对数据
-        if (options.type === 'FormData' && typeof options.body === 'object') {
-            let params = new FormData();
-            for (let key of Object.keys(options.body)) {
-                params.append(key, options.body[key]);
+        // 判断params中是否有值
+        if (Object.keys(params).length > 0) {
+            //可以是上传键值对形式，也可以是文件，使用append创造键值对数据
+            if (options.type === 'FormData' && typeof options.body === 'object') {
+                let params = new FormData();
+                for (let key of Object.keys(options.body)) {
+                    params.append(key, options.body[key]);
+                }
+                options.body = params;
+            }else{
+                //一般我们常用场景用的是json，所以需要在headers加Content-Type类型
+                options.body = JSON.stringify(params);
             }
-            options.body = params;
-        }else{
-            //一般我们常用场景用的是json，所以需要在headers加Content-Type类型
-            options.body = JSON.stringify(params);
         }
+
         return http.staticFetch(url, options); //类的静态方法只能通过类本身调用
     }
 
