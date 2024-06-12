@@ -15,9 +15,10 @@ export async function POST(req:NextRequest) {
         }
         const offset = (current - 1) * pageSize; // 计算要跳过的记录数
         const totalResult = await query(
-            'SELECT COUNT(*) FROM albums WHERE user_id = $1 AND album_id = $2;',
+            'SELECT COUNT(*) FROM images WHERE user_id = $1 AND album_id = $2;',
             [userId,albumId]
         );
+        console.log('totalResult',totalResult)
         // 查询当前页数据
         const result = await query(
             'SELECT * FROM images WHERE user_id = $1 AND album_id = $2 ORDER BY album_id ASC LIMIT $3 OFFSET $4;',

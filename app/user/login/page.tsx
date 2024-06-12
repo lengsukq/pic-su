@@ -59,6 +59,10 @@ const Page = () => {
                 // backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
                 title="Pic-Su"
                 subTitle="一站式图片管理平台"
+                containerStyle={{
+                    backgroundColor: 'rgba(255, 255, 255,0.65)',
+                    backdropFilter: 'blur(4px)',
+                }}
             >
                 <Tabs
                     centered
