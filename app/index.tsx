@@ -8,7 +8,7 @@ import React, {useState} from 'react';
 import dynamic from "next/dynamic";
 import {getUserInfo, logout, UserInfoInter} from "@/utils/client/apihttp";
 import {message} from "antd";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import UserInfo from "@/components/userInfo";
 const ProLayout = dynamic(
     () => import("@ant-design/pro-components").then((com) => com.ProLayout),
@@ -37,6 +37,13 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
         })
     }
     const router = useRouter()
+    const nowPathname = usePathname();
+    const excludePaths = ["/user/login"];
+    if (excludePaths.includes(nowPathname)){
+        return <>
+            {children}
+        </>
+    }
     return (
         <>
         <UserLogin openLogin={openLogin} onChange={(e: boolean)=>setOpenLogin(e)}/>

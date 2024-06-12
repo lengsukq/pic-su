@@ -108,3 +108,7 @@ export async function editUserInfo(params:UserInfoInter) {
 export async function getImageHosting() {
     return post(`/api/image-api/getImageHosting`);
 }
+// 获取bing的每日一图
+export async function getBingImage() {
+    return post(`/api/image-api/getBingImage`);
+}
