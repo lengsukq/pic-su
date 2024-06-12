@@ -9,7 +9,6 @@ export async function middleware(req:NextRequest) {
     if (!verifiedToken) {
         return BizResult.authfailed("");
     }
-        // return NextResponse.redirect(new URL('/', req.url))
     return NextResponse.next()
 
 }
@@ -27,7 +26,7 @@ export const config = {
          */
         // '/api/image-api/((?!token))',
         // '/api/((?!user)(?!image-api/token).*)',
-        '/api/((?!user/login)(?!user/register)(?!image-api/token).*)',
+        '/api/((?!user/login)(?!user/register)(?!image-api/token)(?!image-api/getBingImage).*)',
         // '/((?!/uuuu|_next/static|_next/image|favicon.ico).*)',
 
     ],

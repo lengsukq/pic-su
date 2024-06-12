@@ -1,3 +1,4 @@
+// 'use client'
 import {
     ModalForm,
     ProForm,
@@ -13,7 +14,7 @@ const UserInfo: React.FC<{
     setOpenUserInfo: Function,
     userInfo:UserInfoInter
 }> = ({openUserInfo,setOpenUserInfo,userInfo})=>{
-    console.log('userInfo',userInfo)
+    // console.log('userInfo',userInfo)
     const [form] = Form.useForm<UserInfoInter>();
     const formRef = useRef<ProFormInstance>();
     const onOpenChange = (e:boolean)=>{

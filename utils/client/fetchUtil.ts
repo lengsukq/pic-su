@@ -4,6 +4,9 @@ interface ErrorWithResponse extends Error {
     response?: Response;
 }
 const checkStatus = (res:Response) => {
+    if (res.status === 401){
+        window.location.href = '/user/login'
+    }
     if (res.status === 200) {
         return res;
     }

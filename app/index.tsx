@@ -38,6 +38,13 @@ export default function MenuContainer({children}: Readonly<{ children: React.Rea
     }
     const router = useRouter()
     const nowPathname = usePathname();
+
+    // const { push } = useRouter();
+    //
+    // useEffect(() => {
+    //     console.log('nowPathname',nowPathname)
+    //     push('/user/login');
+    // }, []);
     const excludePaths = ["/user/login"];
     if (excludePaths.includes(nowPathname)){
         return <>
