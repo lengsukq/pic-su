@@ -23,7 +23,7 @@ const Page: React.FC = () => {
     const searchParams = useSearchParams();
 
     useEffect(() => {
-        getAlbumPicsAct();
+        getAlbumPicsAct().then();
     }, []); // 空数组表示这个effect只在组件挂载时运行一次
     // 使用fetch API获取数据
     const getAlbumPicsAct = async () => {
@@ -89,7 +89,7 @@ const Page: React.FC = () => {
                         >
                             <Meta
                                 title={`上传于-${convertDateFormat(item.created_at)}`} description={
-                                <div className={'cursor-pointer text-ellipsis overflow-hidden'} onClick={() => clickToCopy(item.url)}>
+                                <div className={'cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap'} onClick={() => clickToCopy(item.url)}>
                                     {item.url}
                                 </div>
                             }/>

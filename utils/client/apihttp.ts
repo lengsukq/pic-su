@@ -104,3 +104,7 @@ export interface UserInfoInter {
 export async function editUserInfo(params:UserInfoInter) {
     return post(`/api/user/editUserInfo`, params);
 }
+// 获取所有启用的图床
+export async function getImageHosting() {
+    return post(`/api/image-api/getImageHosting`);
+}

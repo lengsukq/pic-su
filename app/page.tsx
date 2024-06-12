@@ -2,8 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import {UploadOutlined} from '@ant-design/icons';
 import type {GetProp, UploadFile, UploadProps} from 'antd';
-import {Button, Flex, Image, message, Modal, Upload} from 'antd';
-import BedNameRadio from "@/components/bedNameRadio";
+import {Button, Flex, Image, message, Modal, Upload,Select } from 'antd';
 import {compressFile} from "@/utils/compressionFile";
 import {PageContainer} from "@ant-design/pro-components";
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -16,6 +15,7 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 import {Slider} from 'antd';
+import {getImageHosting} from "@/utils/client/apihttp";
 
 const IntegerStep  : React.FC<{  inputValue: number;
     onChange: (newValue: number) => void;}>= ({inputValue, onChange}) => {
@@ -61,6 +61,9 @@ const App: React.FC = () => {
     }
     // 图片压缩
     const beforeUpload = async (file: File) => {
+        if (!bedType){
+            message.error('请选择图床').then();
+        }
         return await compressFile(file, 'image/jpeg',inputValue/10)
     }
 
@@ -75,14 +78,27 @@ const App: React.FC = () => {
         }
     }
     const [bedType, setBedType] = useState('');
+    const [options, setOptions] = useState<{ value: string; label: string;key: string}[]>([]);
     useEffect(() => {
-        setBedType(process.env["NEXT_PUBLIC_DEFAULT_BED"])
+        getImageHosting().then(res=>{
+            if(res.code === 200){
+                console.log(res.data)
+                setOptions(res.data)
+            }
+        })
     }, [])
     return (
         <>
             <PageContainer
                 extra={
-                    <BedNameRadio bedType={bedType} onChange={(e) => setBedType((e.target as HTMLInputElement).value)}/>
+                    // <BedNameRadio bedType={bedType} onChange={(e) => setBedType((e.target as HTMLInputElement).value)}/>
+                    <Select
+                        showSearch
+                        placeholder="请选择要上传的图床"
+                        optionFilterProp="children"
+                        onChange={setBedType}
+                        options={options}
+                    />
                 }
             >
                 <IntegerStep inputValue={inputValue} onChange={(e:number)=>setInputValue(e)}/>

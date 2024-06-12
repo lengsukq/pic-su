@@ -12,7 +12,7 @@ export async function POST(req:NextRequest) {
         const formData = await req.formData();
         const file:File = <File>formData.get('file');
         const base64 :string= <string>formData.get('base64');
-        const bedType = <"SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB">formData.get('bedType') || process.env.NEXT_PUBLIC_DEFAULT_BED;
+        const bedType = <"SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB">formData.get('bedType');
         // 参数有效性检查
         if (!bedType) {
             // 参数不完整

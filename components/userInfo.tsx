@@ -47,9 +47,8 @@ const UserInfo: React.FC<{
                     disabled
                     width="md"
                     name="username"
-                    label="用户名"
-                    tooltip="最长为 24 位"
-                    placeholder="请输入用户名"
+                    label="用户昵称"
+                    placeholder="请输入用户昵称"
                 />
 
                 <ProFormText
@@ -79,6 +78,7 @@ const UserInfo: React.FC<{
                     width="md"
                     name="SM_TOKEN"
                     label="SM图床Token"
+                    tooltip="为空则禁用"
                     placeholder="请输入SM图床Token"
                 />
 
@@ -86,6 +86,7 @@ const UserInfo: React.FC<{
                     width="md"
                     name="IMGBB_API"
                     label="IMGBB图床API"
+                    tooltip="为空则禁用"
                     placeholder="请输入IMGBB图床API"
                 />
             </ProForm.Group>
@@ -94,6 +95,7 @@ const UserInfo: React.FC<{
                     width="md"
                     name="BILIBILI_SESSDATA"
                     label="B站登录SESSDATA"
+                    tooltip="为空则禁用"
                     placeholder="请输入B站登录SESSDATA"
                 />
 
@@ -101,6 +103,7 @@ const UserInfo: React.FC<{
                     width="md"
                     name="BILIBILI_CSRF"
                     label="B站登录CSRF"
+                    tooltip="为空则禁用"
                     placeholder="请输入B站登录CSRF"
                 />
             </ProForm.Group>
@@ -109,6 +112,7 @@ const UserInfo: React.FC<{
                     width="md"
                     name="TG_URL"
                     label="Telegra的（代理）地址"
+                    tooltip="为空则使用原始地址"
                     placeholder="请输入Telegra的（代理）地址"
                 />
             </ProForm.Group>
