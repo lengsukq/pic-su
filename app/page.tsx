@@ -15,7 +15,7 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 import {Slider} from 'antd';
-import {getImageHosting} from "@/utils/client/apihttp";
+import {getAlbumList, getImageHosting} from "@/utils/client/apihttp";
 
 const IntegerStep  : React.FC<{  inputValue: number;
     onChange: (newValue: number) => void;}>= ({inputValue, onChange}) => {
@@ -30,7 +30,14 @@ const IntegerStep  : React.FC<{  inputValue: number;
         />
     );
 };
+const ExtraContent : React.FC<{  inputValue: number;
+    onChange: (newValue: number) => void;}>= ({inputValue, onChange}) => {
+    return (
+        <>
 
+        </>
+    )
+};
 const App: React.FC = () => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -63,6 +70,7 @@ const App: React.FC = () => {
     const beforeUpload = async (file: File) => {
         if (!bedType){
             message.error('请选择图床').then();
+            return false;
         }
         return await compressFile(file, 'image/jpeg',inputValue/10)
     }
@@ -78,27 +86,48 @@ const App: React.FC = () => {
         }
     }
     const [bedType, setBedType] = useState('');
-    const [options, setOptions] = useState<{ value: string; label: string;key: string}[]>([]);
-    useEffect(() => {
-        getImageHosting().then(res=>{
-            if(res.code === 200){
-                console.log(res.data)
+    const [options, setOptions] = useState<{ value: string; label: string}[]>([]);
+    const [albumId, setAlbumId] = useState('')
+    const [albumList, setAlbumList] = useState<{ value: string; label: string}[]>([]);
+    useEffect( () => {
+        getImageHosting().then(res => {
+            if (res.code === 200) {
                 setOptions(res.data)
             }
         })
+        getAlbumList({current: 1, pageSize: 10}).then(res => {
+            if (res.code === 200) {
+                setAlbumList(res.data.record);
+            }
+        })
+
     }, [])
     return (
         <>
             <PageContainer
                 extra={
                     // <BedNameRadio bedType={bedType} onChange={(e) => setBedType((e.target as HTMLInputElement).value)}/>
-                    <Select
-                        showSearch
-                        placeholder="请选择要上传的图床"
-                        optionFilterProp="children"
-                        onChange={setBedType}
-                        options={options}
-                    />
+                    <>
+                        <Select
+                            showSearch
+                            placeholder="请选择要上传的图床"
+                            onChange={setBedType}
+                            options={options}
+                        />
+                        <Select
+                            fieldNames={
+                                {
+                                    value: 'album_id',
+                                    label: 'album_name',
+                                }
+                            }
+                            showSearch
+                            placeholder="请选择要上传的相册"
+                            onChange={setAlbumId}
+                            options={albumList}
+                        />
+                    </>
+
                 }
             >
                 <IntegerStep inputValue={inputValue} onChange={(e:number)=>setInputValue(e)}/>
@@ -114,10 +143,11 @@ const App: React.FC = () => {
                     fileList={fileList}
                     onPreview={handlePreview}
                     onChange={handleChange}
-                    data={{bedType: bedType}}
+                    data={{bedType: bedType,albumId:albumId}}
                 >
                     <Flex>
-                        <Button icon={<UploadOutlined/>}>Upload</Button>
+
+                        <Button icon={<UploadOutlined/>} disabled={bedType === ''}>Upload</Button>
                     </Flex>
 
                 </Upload>

@@ -3,6 +3,7 @@ import BizResult from "@/utils/BizResult";
 import {upImgMain} from "@/utils/imageTools";
 import {NextRequest} from 'next/server'
 import {query} from "@/utils/db";
+
 export async function POST(req: NextRequest) {
     try {
 
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest) {
         const base64: string = <string>formData.get('base64');
         const bedType = <"SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB">formData.get('bedType');
         // 参数有效性检查
-        if (!bedType || !token || !(albumName|| albumId) || !(file || base64)) {
+        if (!bedType || !token || !(albumName || albumId) || !(file || base64)) {
             // 参数不完整
             return BizResult.validateFailed('', '参数不完整');
         }
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
         if (info.status !== 'enable') return BizResult.fail("token已禁用");
         if (info.usage_limit <= 0) return BizResult.fail("token次数已用完");
         // 如果只填了album_name，则通过album_name、user_id查询相册album_id
-        if (albumName){
+        if (albumName) {
             // 通过album_name、user_id查询相册album_id
             const albumResult = await query(
                 `SELECT * FROM albums WHERE album_name = $1 AND user_id = $2`,
@@ -49,27 +50,27 @@ export async function POST(req: NextRequest) {
             );
             if (!albumResult.rows.length) {
                 return BizResult.fail("相册不存在");
-            }else{
+            } else {
                 albumId = albumResult.rows[0].album_id;
                 console.log('获取到相册id', albumId)
             }
         }
         // album_permissions为[]时，不限制上传相册id
-        if (info.album_permissions.length!==0){
+        if (info.album_permissions.length !== 0) {
             if (!info.album_permissions.includes(Number(albumId))) {
-                console.log('token无权限上传该相册',info.album_permissions,albumId)
+                console.log('token无权限上传该相册', info.album_permissions, albumId)
                 return BizResult.fail("token无权限上传该相册");
             }
-        }else{
-            // 通过album_id、album_name、user_id查询相册是否存在
-            const albumExistResult = await query(
-                `SELECT * FROM albums WHERE (album_id = $1 OR album_name = $2) AND user_id = $3`,
-                [albumId,albumName, info.user_id]
-            );
-            if (!albumExistResult.rows.length) {
-                return BizResult.fail("相册不存在");
-            }
         }
+        // 通过album_id、album_name、user_id查询相册是否存在
+        const albumExistResult = await query(
+            `SELECT * FROM albums WHERE (album_id = $1 OR album_name = $2) AND user_id = $3`,
+            [albumId, albumName, info.user_id]
+        );
+        if (!albumExistResult.rows.length) {
+            return BizResult.fail("相册不存在");
+        }
+
         const fileData = {file, base64, bedType}
         const user = await query('SELECT * FROM users WHERE user_id = $1', [info.user_id]);
 
