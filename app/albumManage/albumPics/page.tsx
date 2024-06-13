@@ -28,23 +28,27 @@ const Page: React.FC = () => {
     }, []); // 空数组表示这个effect只在组件挂载时运行一次
     // 使用fetch API获取数据
     const getAlbumPicsAct = async () => {
+        console.log('getAlbumPicsAct')
         try {
             if (loading) {
                 return;
             }
-            const res = await getAlbumPics({albumId: searchParams.get('albumId') as string, current: current, pageSize: 10})
+            const res = await getAlbumPics({
+                albumId: searchParams.get('albumId') as string,
+                current: current,
+                pageSize: 20
+            })
             if (res.code === 200) {
+                setCurrent(current + 1)
                 setData([...data, ...res.data.record]);
-                if (res.data.record.length < 10){
+                if (res.data.record.length < 20) {
                     setLoading(true);
                 }
-                setCurrent(current + 1)
 
             }
 
         } catch (error) {
-
-            setLoading(false);
+            setLoading(true);
             console.error('Error fetching data:', error);
         }
     };
@@ -78,91 +82,56 @@ const Page: React.FC = () => {
                 dataLength={data.length}
                 next={getAlbumPicsAct}
                 hasMore={!loading}
-                loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+                loader={<Skeleton paragraph={{ rows: 1 }}  />}
                 endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                 scrollableTarget="scrollableDiv"
             >
                 <List
                     dataSource={data}
                     grid={{
-                        column:4,
-                        xs:24,
-                        md:12,
-                        lg:8,
-                        xl:4,
+                        // gutter: 16,
+                        xs: 1,
+                        sm: 2,
+                        md: 3,
+                        lg: 4,
+                        xl: 5,
+                        xxl: 6,
                     }}
                     renderItem={(item) => (
-                                <Card
-                                    className={'m-4'}
-                                    hoverable
-                                    cover={
-                                        <Image alt={item.created_at} src={item.url} className={'object-cover'}
-                                               height={120}/>
-                                    }
-                                    actions={[
-                                        <CopyTwoTone key="copy" onClick={() => clickToCopy(item.url)}/>,
-                                        <Popconfirm
-                                            key="delete"
-                                            title="提示"
-                                            description="确定删除该图片吗？"
-                                            onConfirm={() => deletePicAct(item)}
-                                            okText="确认"
-                                            cancelText="取消"
-                                        >
-                                            <DeleteTwoTone/>
-                                        </Popconfirm>
-                                    ]}
+                        <Card
+                            className={'m-2'}
+                            hoverable
+                            cover={
+                                <Image alt={item.created_at} src={item.url} className={'object-cover'}
+                                       height={120}/>
+                            }
+                            actions={[
+                                <CopyTwoTone key="copy" onClick={() => clickToCopy(item.url)}/>,
+                                <Popconfirm
+                                    key="delete"
+                                    title="提示"
+                                    description="确定删除该图片吗？"
+                                    onConfirm={() => deletePicAct(item)}
+                                    okText="确认"
+                                    cancelText="取消"
                                 >
-                                    <Meta
-                                        title={`上传于-${convertDateFormat(item.created_at)}`} description={
-                                        <div
-                                            className={'cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap'}
-                                            onClick={() => clickToCopy(item.url)}>
-                                            {item.url}
-                                        </div>
-                                    }/>
-                                </Card>
+                                    <DeleteTwoTone/>
+                                </Popconfirm>
+                            ]}
+                        >
+                            <Meta
+                                title={`上传于-${convertDateFormat(item.created_at)}`} description={
+                                <div
+                                    className={'cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap'}
+                                    onClick={() => clickToCopy(item.url)}>
+                                    {item.url}
+                                </div>
+                            }/>
+                        </Card>
                     )}
                 />
 
             </InfiniteScroll>
-            {/*<Row gutter={[16, 16]}>*/}
-            {/*    {data.map(item => (*/}
-            
-            {/*            <Col className="gutter-row" span={4} key={item.image_id} xs={24} md={12} lg={8} xl={4}>*/}
-            {/*                <Card*/}
-            {/*                    hoverable*/}
-            {/*                    cover={*/}
-            {/*                        <Image alt={item.created_at} src={item.url} className={'object-cover'}*/}
-            {/*                               height={120}/>*/}
-            {/*                    }*/}
-            {/*                    actions={[*/}
-            {/*                        <CopyTwoTone key="copy" onClick={() => clickToCopy(item.url)}/>,*/}
-            {/*                        <Popconfirm*/}
-            {/*                            key="delete"*/}
-            {/*                            title="提示"*/}
-            {/*                            description="确定删除该图片吗？"*/}
-            {/*                            onConfirm={() => deletePicAct(item)}*/}
-            {/*                            okText="确认"*/}
-            {/*                            cancelText="取消"*/}
-            {/*                        >*/}
-            {/*                            <DeleteTwoTone/>*/}
-            {/*                        </Popconfirm>*/}
-            {/*                    ]}*/}
-            {/*                >*/}
-            {/*                    <Meta*/}
-            {/*                        title={`上传于-${convertDateFormat(item.created_at)}`} description={*/}
-            {/*                        <div*/}
-            {/*                            className={'cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap'}*/}
-            {/*                            onClick={() => clickToCopy(item.url)}>*/}
-            {/*                            {item.url}*/}
-            {/*                        </div>*/}
-            {/*                    }/>*/}
-            {/*                </Card>*/}
-            {/*            </Col>*/}
-            {/*        )*/}
-            {/*    )}*/}
-            {/*</Row>*/}
         </>
     );
 };
