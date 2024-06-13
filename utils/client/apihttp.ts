@@ -112,3 +112,11 @@ export async function getImageHosting() {
 export async function getBingImage() {
     return post(`/api/image-api/getBingImage`);
 }
+export interface addAlbumInter {
+    addAlbum:string,
+    description:string
+}
+// 新增相册
+export async function addAlbum(params:addAlbumInter) {
+    return post(`/api/albumManage/add`,params);
+}

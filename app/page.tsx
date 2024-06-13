@@ -30,14 +30,6 @@ const IntegerStep  : React.FC<{  inputValue: number;
         />
     );
 };
-const ExtraContent : React.FC<{  inputValue: number;
-    onChange: (newValue: number) => void;}>= ({inputValue, onChange}) => {
-    return (
-        <>
-
-        </>
-    )
-};
 const App: React.FC = () => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -106,7 +98,6 @@ const App: React.FC = () => {
         <>
             <PageContainer
                 extra={
-                    // <BedNameRadio bedType={bedType} onChange={(e) => setBedType((e.target as HTMLInputElement).value)}/>
                     <>
                         <Select
                             showSearch
