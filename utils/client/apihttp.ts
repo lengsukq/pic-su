@@ -114,7 +114,8 @@ export async function getBingImage() {
 }
 export interface addAlbumInter {
     addAlbum:string,
-    description:string
+    description:string,
+    albumCover:string
 }
 // 新增相册
 export async function addAlbum(params:addAlbumInter) {

@@ -1,12 +1,12 @@
 'use client'
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {EditOutlined, EllipsisOutlined, SettingOutlined} from '@ant-design/icons';
-import {Card} from 'antd';
+import {Card, Image} from 'antd';
 import {addAlbum, addAlbumInter, getAlbumList} from "@/utils/client/apihttp";
 import {Col, Row, Statistic,Tooltip} from 'antd';
 import {useRouter} from "next/navigation";
 import {convertDateFormat} from "@/utils/client/tools";
-import {PageContainer} from "@ant-design/pro-components";
+import {PageContainer, ProFormInstance} from "@ant-design/pro-components";
 import {ModalForm, ProFormText,ProFormTextArea} from '@ant-design/pro-components';
 import {Button, message} from 'antd';
 
@@ -20,7 +20,8 @@ interface Item {
     album_id: string;
     cover_image_url: string | null,
     created_at: string,
-    updated_at: string
+    updated_at: string,
+    album_cover: string,
 }
 
 const Page: React.FC = () => {
@@ -44,6 +45,7 @@ const Page: React.FC = () => {
             console.error('Error fetching data:', error);
         }
     };
+    const formRef = useRef<ProFormInstance>();
     // 如果数据还没有加载，显示加载信息
     if (!data) {
         return <div>Loading...</div>;
@@ -61,24 +63,35 @@ const Page: React.FC = () => {
                             resetText: '取消',
                         },
                     }}
+                    formRef={formRef}
                     onFinish={async (values:addAlbumInter) => {
-                        console.log(values);
-                        addAlbum(values).then(res => {
+                        return await addAlbum(values).then(res => {
                             if (res.code === 200) {
                                 message.success('提交成功');
                                 getAlbumListAct();
-                            }}
-                        )
-                        message.success('提交成功');
-                        return true;
+                                formRef.current?.resetFields();
+                                return true; // 在这里返回 true
+                            } else {
+                                // 如果 addAlbum 失败，可以在这里处理错误
+                                message.error('提交失败');
+                                return false;
+                            }
+                        });
                     }}
                 >
                     <ProFormText
                         width="md"
+                        name="albumCover"
+                        label="相册封面图片链接"
+                        tooltip={'若不输入，则随机生成封面'}
+                        placeholder="请输相册封面图片链接"
+                    />
+                    <ProFormText
+                        width="md"
                         name="albumName"
                         label="相册名称"
-                        tooltip="最长为 24 位"
                         placeholder="请输相册入名称"
+                        rules={[{ required: true, message: '请输入相册名称' }]}
                     />
 
                     <ProFormTextArea
@@ -86,21 +99,18 @@ const Page: React.FC = () => {
                         name="description"
                         label="相册描述"
                         placeholder="请输入相册描述"
+                        rules={[{ required: true, message: '请输入相册描述' }]}
                     />
                 </ModalForm>
             }>
             <Row gutter={[16, 16]}>
-
-
                 {data.map(item => (
                     <Col className="gutter-row" span={4} key={item.album_id} xs={24} md={12} lg={8} xl={4}>
                         <Card onClick={() => checkPics(item)}
                             // style={{width: 300, marginBottom: 20}}
                               cover={
-                                  <img
-                                      alt="example"
-                                      src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-                                  />
+                                  <Image alt={item.created_at} src={item.album_cover} className={'object-cover'}
+                                         height={120}/>
                               }
                               actions={[
                                   <SettingOutlined key="setting"/>,
