@@ -8,6 +8,7 @@ import MenuContainer from "./index"
 const inter = Inter({subsets: ["latin"]});
 // 引入antd组件 https://ant-design.antgroup.com/docs/blog/why-not-static-cn
 import {ConfigProvider, App} from 'antd';
+import { RootStyleRegistry } from './RootStyleRegistry'
 
 export const metadata: Metadata = {
     title: "Pic-Su",
@@ -24,9 +25,11 @@ export default function RootLayout({children,}: Readonly<{
         <meta name="referrer" content="no-referrer"/>
         <ConfigProvider>
             <App>
+                <RootStyleRegistry>
                     <MenuContainer>
                         {children}
                     </MenuContainer>
+               </RootStyleRegistry>
             </App>
         </ConfigProvider>
 
