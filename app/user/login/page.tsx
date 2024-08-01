@@ -20,7 +20,7 @@ type LoginType = 'register' | 'account';
 const Page = () => {
     const [loginType, setLoginType] = useState<LoginType>('account');
     const router = useRouter()
-
+    const items = [{label: '登录',key: 'account',},{label: '注册',key:'register'}]
     const register =async (val:any)=>{
         userRegister(val).then((res)=>{
             if (res.code===200){
@@ -65,12 +65,11 @@ const Page = () => {
                 }}
             >
                 <Tabs
+                    items={items}
                     centered
                     activeKey={loginType}
                     onChange={(activeKey) => setLoginType(activeKey as LoginType)}
                 >
-                    <Tabs.TabPane key={'account'} tab={'登录'} />
-                    <Tabs.TabPane key={'register'} tab={'注册'} />
                 </Tabs>
                 {loginType === 'account' && (
                     <>
