@@ -92,6 +92,7 @@ const Page = () => {
                             fieldProps={{
                                 size: 'large',
                                 prefix: <LockOutlined className={'prefixIcon'} />,
+                                autoComplete:'on'
                             }}
                             placeholder={'请输入密码'}
                             rules={[
