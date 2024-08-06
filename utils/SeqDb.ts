@@ -28,7 +28,7 @@ export async function connect() {
         console.error('Unable to connect to the database:', err);
     }
 }
-export async function executeQuery<RowType>(text: string, params?: any[]) {
+export async function executeQuery(text: string, params?: any[]) {
     try {
         const start = Date.now();
 

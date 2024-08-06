@@ -1,8 +1,8 @@
 'use server'
 import BizResult from '@/utils/BizResult';
-import {query} from "@/utils/db";
 import {NextRequest} from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
+import {executeQuery} from "@/utils/SeqDb";
 
 export async function POST(req: NextRequest) {
     try {
@@ -15,26 +15,25 @@ export async function POST(req: NextRequest) {
             return BizResult.validateFailed('', '参数不完整');
         }
         const offset = (current - 1) * pageSize; // 计算要跳过的记录数
-        const totalResult = await query(
-            'SELECT COUNT(*) FROM albums WHERE user_id = $1;',
+        const totalResult = await executeQuery(
+            'SELECT COUNT(*) FROM albums WHERE user_id = ?;',
             [userId]
         );
         // 查询当前页数据，联合images表查询
-        const result = await query(
+        const result = await executeQuery(
             `SELECT albums.*, COUNT(images.image_id) AS image_count
                 FROM albums
                 LEFT JOIN images ON albums.album_id = images.album_id
-                WHERE albums.user_id = $1
-                 AND ($2 = '' OR albums.album_name ILIKE $2)
+                WHERE albums.user_id = ?
+                 AND (? = '' OR albums.album_name ILIKE ?)
                  GROUP BY albums.album_id
                  ORDER BY albums.album_id ASC
-                 LIMIT $3 OFFSET $4;`,
-            [userId, `%${albumName || ""}%`, pageSize, offset] // 使用参数化查询防止 SQL 注入
+                 LIMIT ? OFFSET ?;`,
+            [userId, `%${albumName || ""}%`, `%${albumName || ""}%`, pageSize, offset] // 使用参数化查询防止 SQL 注入
         );
-        // console.log('result',result)
         return BizResult.success({
-            record: result.rows,
-            total: Number(totalResult.rows[0].count)
+            record: result[0],
+            total: Number(totalResult[0][0].count)
         }, '查询相册列表成功');
     } catch (error) {
         console.log(error);
