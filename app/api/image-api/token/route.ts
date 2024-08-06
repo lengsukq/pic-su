@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
         //multipart/form-data;
         const formData = await req.formData();
-        const token: string = <string>formData.get('token');
+        const token: string = <string>formData.get('token') || <string>req.headers.get('Authorization');
         const file: File = <File>formData.get('file');
         let albumId = formData.get('albumId');
         const albumName = formData.get('albumName');
