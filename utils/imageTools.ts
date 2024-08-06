@@ -1,169 +1,111 @@
-import {UserJwtPayload} from "@/utils/auth/auth";
+import { UserJwtPayload } from "@/utils/auth/auth";
 
-
+// 定义文件数据的接口
 interface FileData {
     file: any;
     bedType: "SM" | "BilibiliDaily" | "BilibiliCover" | "IMGBB" | "TG";
-    base64: string;
+    base64?: string;
 }
-let userInfoApi: UserJwtPayload;
-export async function upImgMain(fileData: FileData, userInfo: any) {
-    userInfoApi = userInfo;
-    const upImgObj = {
-        "SM": (fileData:any) => upImgBySM(fileData),// sm图床
-        "BilibiliDaily": (fileData:any) => upImgByBilibiliDaily(fileData), // 哔哩哔哩动态/专栏
-        "BilibiliCover": (fileData:any) => upImgByBilibiliCover(fileData), // 哔哩哔哩视频封面
-        "IMGBB": (fileData:any) => upImgByImgBB(fileData), // IMGBB 图床
-        "TG": (fileData:any) => upImgByTelegraph(fileData), //  telegraph图床
 
+let userInfoApi: UserJwtPayload;
+
+// 上传图片主函数，根据不同的图床类型选择相应的上传函数
+export async function upImgMain(fileData: FileData, userInfo: UserJwtPayload) {
+    userInfoApi = userInfo;
+    const upImgObj: Record<string, (fileData: FileData) => Promise<any>> = {
+        "SM": upImgBySM,
+        "BilibiliDaily": upImgByBilibiliDaily,
+        "BilibiliCover": upImgByBilibiliCover,
+        "IMGBB": upImgByImgBB,
+        "TG": upImgByTelegraph,
+    };
+
+    const uploadFunction = upImgObj[fileData.bedType];
+    return uploadFunction ? await uploadFunction(fileData) : { msg: '无效的bedType', url: '' };
+}
+
+// 通用的上传请求函数
+async function fetchUpload(url: string, formData: FormData, headers: HeadersInit = {}): Promise<any> {
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers,
+        });
+
+        if (!response.ok) {
+            throw new Error('上传失败');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        return null;
     }
-    return await upImgObj[`${fileData.bedType}`](fileData);
 }
 
 // 上传图片到SM图床
-export async function upImgBySM({file}:any) {
+async function upImgBySM({ file }: FileData) {
     const formData = new FormData();
     formData.append('smfile', file);
     formData.append('format', 'json');
-    try {
-        const response = await fetch('https://sm.ms/api/v2/upload', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                "Authorization": userInfoApi.SM_TOKEN
-            }
-        });
-        // return response.json();
-        if (!response.ok) {
-            console.log('response', response)
 
-            return {msg: '上传失败，请检查SM图床Token是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
-        }
+    const data = await fetchUpload('https://sm.ms/api/v2/upload', formData, {
+        "Authorization": userInfoApi.SM_TOKEN,
+    });
 
-        const data = await response.json();
-        console.log('sm', data);
-        return {msg: '上传成功', url: data.data.url}; // 返回获取到的图片链接
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return {msg: '上传失败', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
-    }
+    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查SM图床Token是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
 }
 
 // 上传图片到哔哩哔哩动态/专栏
-export async function upImgByBilibiliDaily({file}:any) {
-    console.log('upImgByBilibiliDaily')
+async function upImgByBilibiliDaily({ file }: FileData) {
     const formData = new FormData();
     formData.append('file_up', file);
-    // 使用专栏图片上传
     formData.append('biz', 'article');
-    // 使用动态图片上传，改版过之后只有45分钟有效期
-    // formData.append('biz', 'new_dyn');
-    // formData.append('category', 'daily');
     formData.append('csrf', userInfoApi.BILIBILI_CSRF);
 
-    try {
-        const response = await fetch('https://api.bilibili.com/x/dynamic/feed/draw/upload_bfs', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                "cookie": `SESSDATA=${userInfoApi.BILIBILI_SESSDATA}`
-            }
-        });
-        // return response.json();
-        if (!response.ok) {
-            console.log('response', response)
-            return {msg: '上传失败，请检查哔哩哔哩动态/专栏图片参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg', error: response} // 返回默认图片链接
-        }
+    const data = await fetchUpload('https://api.bilibili.com/x/dynamic/feed/draw/upload_bfs', formData, {
+        "cookie": `SESSDATA=${userInfoApi.BILIBILI_SESSDATA}`,
+    });
 
-        const data = await response.json();
-        console.log('bilibili动态图片', data);
-        return {msg: '上传成功', url: data.data.image_url}; // 返回获取到的图片链接
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return {msg: '系统异常', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
-
-    }
+    return data ? { msg: '上传成功', url: data.data.image_url } : { msg: '上传失败，请检查哔哩哔哩动态/专栏图片参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
 }
 
-// 上传图片到哔哩哔哩视频封面，目前图片过大时会请求报错，需要使用json获取客户端的数据，然后在使用form请求b站接口
-export async function upImgByBilibiliCover({base64}:any) {
-    try {
-        const formData = new FormData();
-        formData.append('cover', base64);
-        formData.append('csrf', userInfoApi.BILIBILI_CSRF);
-        // console.log('formData',formData)
-        const response = await fetch('https://member.bilibili.com/x/vu/web/cover/up', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                "cookie": `SESSDATA=${userInfoApi.BILIBILI_SESSDATA}`
-            }
-        });
-        // return response.json();
-        if (!response.ok) {
-            console.log('response', response)
-            return {msg: '上传失败，请检查哔哩哔哩视频封面参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg',} // 返回默认图片链接
-        }
+// 上传图片到哔哩哔哩视频封面
+async function upImgByBilibiliCover({ base64 }: FileData) {
+    const formData = new FormData();
+    formData.append('cover', base64!);
+    formData.append('csrf', userInfoApi.BILIBILI_CSRF);
 
-        const data = await response.json();
-        console.log('bilibili封面图片', data);
-        return {msg: '上传成功', url: data.data.url}; // 返回获取到的图片链接
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return {msg: '系统异常', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+    const data = await fetchUpload('https://member.bilibili.com/x/vu/web/cover/up', formData, {
+        "cookie": `SESSDATA=${userInfoApi.BILIBILI_SESSDATA}`,
+    });
 
-    }
+    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查哔哩哔哩视频封面参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
 }
 
 // 上传到imgBB图床
-export async function upImgByImgBB({file}:any) {
+async function upImgByImgBB({ file }: FileData) {
     const formData = new FormData();
     formData.append('image', file);
     formData.append('key', userInfoApi.IMGBB_API);
-    try {
-        const response = await fetch('https://api.imgbb.com/1/upload', {
-            method: 'POST',
-            body: formData,
-        });
-        if (!response.ok) {
-            console.log('response', response)
 
-            return {msg: '上传失败，请检查imgBB图床API是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
-        }
+    const data = await fetchUpload('https://api.imgbb.com/1/upload', formData);
 
-        const data = await response.json();
-        console.log('sm', data);
-        return {msg: '上传成功', url: data.data.url}; // 返回获取到的图片链接
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return {msg: '系统异常', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
-    }
+    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查imgBB图床API是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
 }
-async function upImgByTelegraph({file}:any) {
+
+// 上传图片到Telegraph图床
+async function upImgByTelegraph({ file }: FileData) {
     const formData = new FormData();
     formData.append('file', file);
-    try {
-        let proxyUrl = userInfoApi.TG_URL;
-        // 保证proxyUrl以‘/’结尾
-        if (!proxyUrl.endsWith('/')) {
-            proxyUrl += '/';
-        }
-        const response = await fetch(`${proxyUrl}https://telegra.ph/upload`, {
-            method: 'POST',
-            body: formData,
-        });
-        // return response.json();
-        if (!response.ok) {
-            console.log('response', response)
 
-            return {msg: '上传失败，请检查SM图床Token是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
-        }
-
-        const data = await response.json();
-        console.log('TG', data);
-        return {msg: '上传成功', url: `${proxyUrl}https://telegra.ph/${data[0].src}`}; // 返回获取到的图片链接
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return {msg: '上传失败', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg'} // 返回默认图片链接
+    let proxyUrl = userInfoApi.TG_URL;
+    if (!proxyUrl.endsWith('/')) {
+        proxyUrl += '/';
     }
+
+    const data = await fetchUpload(`${proxyUrl}https://telegra.ph/upload`, formData);
+
+    return data ? { msg: '上传成功', url: `${proxyUrl}https://telegra.ph/${data[0].src}` } : { msg: '上传失败，请检查Telegraph图床URL是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
 }
