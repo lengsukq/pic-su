@@ -3,6 +3,7 @@ import BizResult from '@/utils/BizResult';
 import {query} from "@/utils/db";
 import { NextRequest } from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
+import {executeQuery} from "@/utils/SeqDb";
 export async function POST(req:NextRequest) {
     try {
         const {user_id:userId} = await verifyAuth(req)
@@ -14,19 +15,20 @@ export async function POST(req:NextRequest) {
             return BizResult.validateFailed('', '参数不完整');
         }
         const offset = (current - 1) * pageSize; // 计算要跳过的记录数
-        const totalResult = await query(
-            'SELECT COUNT(*) FROM tokens WHERE user_id = $1;',
+        const totalResult = await executeQuery(
+            'SELECT COUNT(*) FROM tokens WHERE user_id = ?;',
             [userId]
         );
+        console.log('totalResult', totalResult);
         // 查询当前页数据
-        const result = await query(
-            'SELECT * FROM tokens WHERE user_id = $1 AND ($2 = \'\' OR token_name ILIKE $2) ORDER BY token_id DESC LIMIT $3 OFFSET $4;',
-            [userId, `%${tokenName || ""}%`, pageSize, offset] // 使用参数化查询防止 SQL 注入
+        const result = await executeQuery(
+            'SELECT * FROM tokens WHERE user_id = ? AND (? = \'\' OR token_name ILIKE ?) ORDER BY token_id DESC LIMIT ? OFFSET ?;',
+            [userId, `%${tokenName || ""}%`, `%${tokenName || ""}%`, pageSize, offset] // 使用参数化查询防止 SQL 注入
         );
-        // console.log('result',result)
+        console.log('result',result)
         return BizResult.success({
-            record: result.rows,
-            total: Number(totalResult.rows[0].count)
+            record: result[0],
+            total: Number(totalResult[0][0].count)
         }, '查询token列表成功');
     } catch (error) {
         console.log(error);

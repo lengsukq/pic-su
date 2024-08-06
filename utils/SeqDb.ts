@@ -28,5 +28,22 @@ export async function connect() {
         console.error('Unable to connect to the database:', err);
     }
 }
+export async function executeQuery<RowType>(text: string, params?: any[]) {
+    try {
+        const start = Date.now();
 
+        // 使用Sequelize执行原生SQL查询
+        const result:any = await sequelize.query(text, {
+            replacements: params,
+        });
+
+        const duration = Date.now() - start;
+        console.log('executed query', { text, duration, rows: result.length });
+        // console.log('result---',result)
+        return result ;
+    } catch (error) {
+        console.error('Error executing query:', error);
+        throw error;
+    }
+}
 export { sequelize };
