@@ -1,19 +1,19 @@
 'use server'
 import BizResult from '@/utils/BizResult';
-import {query} from "@/utils/db";
 import { NextRequest } from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
+import {executeQuery} from "@/utils/SeqDb";
 export async function POST(req:NextRequest) {
     console.log('进入')
     try {
         const {user_id:userId} = await verifyAuth(req)
 
         // sql语句，获取users表中的对应user_id的数据
-        const result = await query(
-            'SELECT * FROM users WHERE user_id = $1',
+        const result = await executeQuery(
+            'SELECT * FROM users WHERE user_id = ?',
             [userId]
         );
-        const userInfo = result.rows[0];
+        const userInfo = result[0][0];
         let options: { label: string; value: string; key: string; }[] = [];
 
         const conditions = [

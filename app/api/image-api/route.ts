@@ -3,7 +3,7 @@ import BizResult from "@/utils/BizResult";
 import {upImgMain} from "@/utils/imageTools";
 import { NextRequest } from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
-import {query} from "@/utils/db";
+import {executeQuery} from "@/utils/SeqDb";
 
 export async function POST(req:NextRequest) {
     try {
@@ -28,16 +28,16 @@ export async function POST(req:NextRequest) {
         // 上传到相册
         if (albumId){
             // 通过album_id、album_name、user_id查询相册是否存在
-            const albumExistResult = await query(
-                `SELECT * FROM albums WHERE album_id = $1 AND user_id = $2`,
+            const albumExistResult = await executeQuery(
+                `SELECT * FROM albums WHERE album_id = ? AND user_id = ?`,
                 [albumId, userInfo.user_id]
             );
-            if (!albumExistResult.rows.length) {
+            if (!albumExistResult[0].length) {
                 return BizResult.fail("相册不存在");
             }
             // 向images表中插入数据 user_id,url,created_at,token_id,album_id,update_at
-            await query(
-                `INSERT INTO images (user_id, url, created_at, album_id, update_at) VALUES ($1, $2, NOW(), $3, NOW())`,
+            await executeQuery(
+                `INSERT INTO images (user_id, url, created_at, album_id, update_at) VALUES (?, ?, NOW(), ?, NOW())`,
                 [userInfo.user_id, url, albumId]
             );
         }
