@@ -28,7 +28,7 @@ const Page: React.FC = () => {
     }, []); // 空数组表示这个effect只在组件挂载时运行一次
     // 使用fetch API获取数据
     const getAlbumPicsAct = async () => {
-        console.log('getAlbumPicsAct')
+        console.log('getAlbumPicsAct',loading)
         try {
             if (loading) {
                 return;
@@ -57,8 +57,9 @@ const Page: React.FC = () => {
         try {
             const res = await deletePic({imageId: item.image_id})
             if (res.code === 200) {
-                message.success('删除成功')
-                await getAlbumPicsAct()
+                message.success('删除图片成功')
+                // 删除图片后，更新数据
+                setData(data.filter(pic => pic.image_id !== item.image_id));
             }
 
         } catch (error) {
@@ -89,7 +90,7 @@ const Page: React.FC = () => {
                 <List
                     dataSource={data}
                     grid={{
-                        // gutter: 16,
+                        gutter: 16,
                         xs: 1,
                         sm: 2,
                         md: 3,
@@ -99,7 +100,7 @@ const Page: React.FC = () => {
                     }}
                     renderItem={(item) => (
                         <Card
-                            className={'m-2'}
+                            className={'m-2-i'}
                             hoverable
                             cover={
                                 <Image alt={item.created_at} src={item.url} className={'object-cover'}

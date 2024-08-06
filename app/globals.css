@@ -20,3 +20,6 @@ body{
   /*padding: 10px;*/
   margin: 0;
 }
+.m-2-i{
+  margin: 0.5rem!important;
+}
