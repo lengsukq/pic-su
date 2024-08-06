@@ -1,9 +1,8 @@
 'use server'
 import BizResult from '@/utils/BizResult';
-import {query} from "@/utils/db";
 import { NextRequest } from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
-import * as crypto from "crypto";
+import {executeQuery} from "@/utils/SeqDb";
 export async function POST(req:NextRequest) {
     try {
         const {user_id:userId} = await verifyAuth(req)
@@ -16,10 +15,10 @@ export async function POST(req:NextRequest) {
         }else if (status!=='enable' && status!=='disable'){
             return BizResult.validateFailed('', '状态不正确');
         }
-
-        await query(
-            'UPDATE tokens SET expires_at = $3, token_name = $4, status = $5, usage_limit = $6, description = $7, album_permissions = $8 WHERE user_id = $1 AND token_id = $2',
-            [userId, tokenId, expiresAt, tokenName, status, usageLimit, description, albumPermissions || []]
+        console.log('albumPermissions',albumPermissions)
+        await executeQuery(
+            'UPDATE tokens SET expires_at = ?, token_name = ?, status = ?, usage_limit = ?, description = ?, album_permissions = ? WHERE user_id = ? AND token_id = ?',
+            [expiresAt, tokenName, status, usageLimit, description,JSON.stringify(albumPermissions).replace('[', '{').replace(']', '}') || {}, userId, tokenId]
         );
 
         return BizResult.success('', '修改token信息成功');

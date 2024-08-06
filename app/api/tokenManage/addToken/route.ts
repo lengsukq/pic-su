@@ -1,9 +1,9 @@
 'use server'
 import BizResult from '@/utils/BizResult';
-import {query} from "@/utils/db";
 import {NextRequest} from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
 import * as crypto from "crypto";
+import {executeQuery} from "@/utils/SeqDb";
 
 export async function POST(req: NextRequest) {
     try {
@@ -24,11 +24,11 @@ export async function POST(req: NextRequest) {
         }
         // 调用函数，生成一个32字节长度的token
         const token = generateRandomToken(32);
-        await query(
-            `INSERT INTO tokens(user_id, token, created_at, expires_at, token_name, status, usage_limit, description, album_permissions) 
-                VALUES($1, $2, NOW(), $3, $4, $5, $6, $7, $8) 
+        await executeQuery(
+            `INSERT INTO tokens(user_id, token, created_at, expires_at, token_name, status, usage_limit, description, album_permissions)
+                VALUES(?, ?, NOW(), ?, ?, ?, ?, ?, ?)
                 RETURNING token_id`,
-            [userId, token, expiresAt, tokenName, status, usageLimit, description, albumPermissions || []]
+            [userId, token, expiresAt, tokenName, status, usageLimit, description, JSON.stringify(albumPermissions).replace('[', '{').replace(']', '}') || {}]
         );
 
         return BizResult.success('', '新增token成功');

@@ -1,9 +1,8 @@
 'use server'
 import BizResult from '@/utils/BizResult';
-import {query} from "@/utils/db";
 import { NextRequest } from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
-import * as crypto from "crypto";
+import {executeQuery} from "@/utils/SeqDb";
 export async function POST(req:NextRequest) {
     try {
         const {user_id:userId} = await verifyAuth(req)
@@ -15,8 +14,8 @@ export async function POST(req:NextRequest) {
             return BizResult.validateFailed('', '参数不完整');
         }
 
-        const result = await query(
-            'DELETE FROM tokens WHERE user_id = $1 AND token_id = $2',
+        await executeQuery(
+            'DELETE FROM tokens WHERE user_id = ? AND token_id = ?',
             [userId,tokenId]
         );
 

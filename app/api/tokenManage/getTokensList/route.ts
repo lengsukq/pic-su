@@ -1,7 +1,6 @@
 'use server'
 import BizResult from '@/utils/BizResult';
-import {query} from "@/utils/db";
-import { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server';
 import {verifyAuth} from "@/utils/auth/auth";
 import {executeQuery} from "@/utils/SeqDb";
 export async function POST(req:NextRequest) {
