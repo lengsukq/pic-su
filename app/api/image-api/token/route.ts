@@ -84,9 +84,9 @@ export async function POST(req: NextRequest) {
             `UPDATE tokens SET usage_limit = usage_limit - 1, current_usage = current_usage + 1 WHERE token = ?`,
             [token]
         );
-        // 向images表中插入数据 user_id,url,created_at,token_id,album_id,update_at
+        // 向images表中插入数据 user_id,url,created_at,token_id,album_id,updated_at
         await executeQuery(
-            `INSERT INTO images (user_id, url, created_at, token_id, album_id, update_at) VALUES (?, ?, NOW(), ?, ?, NOW())`,
+            `INSERT INTO images (user_id, url, created_at, token_id, album_id, updated_at) VALUES (?, ?, NOW(), ?, ?, NOW())`,
             [info.user_id, url, info.token_id, albumId]
         );
         return BizResult.success({url: url}, msg);

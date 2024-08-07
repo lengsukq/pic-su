@@ -41,15 +41,15 @@ module.exports = function(sequelize, DataTypes) {
     album_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      comment: "对应的相册id"
+      comment: "对应的相册id",
+      references: {
+        model: 'albums',
+        key: 'album_id'
+      }
     },
     token_id: {
       type: DataTypes.INTEGER,
       allowNull: true
-    },
-    update_at: {
-      type: DataTypes.DATE,
-      allowNull: false
     }
   }, {
     sequelize,

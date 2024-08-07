@@ -35,9 +35,9 @@ export async function POST(req:NextRequest) {
             if (!albumExistResult[0].length) {
                 return BizResult.fail("相册不存在");
             }
-            // 向images表中插入数据 user_id,url,created_at,token_id,album_id,update_at
+            // 向images表中插入数据 user_id,url,created_at,token_id,album_id,updated_at
             await executeQuery(
-                `INSERT INTO images (user_id, url, created_at, album_id, update_at) VALUES (?, ?, NOW(), ?, NOW())`,
+                `INSERT INTO images (user_id, url, created_at, album_id, updated_at) VALUES (?, ?, NOW(), ?, NOW())`,
                 [userInfo.user_id, url, albumId]
             );
         }

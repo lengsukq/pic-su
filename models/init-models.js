@@ -10,6 +10,8 @@ function initModels(sequelize) {
   var tokens = _tokens(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
 
+  images.belongsTo(albums, { as: "album", foreignKey: "album_id"});
+  albums.hasMany(images, { as: "images", foreignKey: "album_id"});
   albums.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(albums, { as: "albums", foreignKey: "user_id"});
   images.belongsTo(users, { as: "user", foreignKey: "user_id"});
