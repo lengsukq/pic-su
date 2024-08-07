@@ -1,6 +1,5 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize,DataTypes } from 'sequelize';
 import pg from 'pg';
-
 const dbConfig = {
     username: process.env.DB_USER,   // 用户名
     host: process.env.DB_HOST,      // 数据库服务器IP
@@ -15,7 +14,10 @@ if (!dbConfig.username || !dbConfig.host || !dbConfig.password || !dbConfig.data
 const pgsqlUrl = `postgresql://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}/${dbConfig.database}`;
 const sequelize = new Sequelize(pgsqlUrl, {
     dialect: 'postgres',
-    dialectModule: pg
+    dialectModule: pg,
+    define: {
+        underscored: true
+    }
 }); // Postgres 示例
 
 export async function connect() {
@@ -46,4 +48,10 @@ export async function executeQuery(text: string, params?: any[]) {
         throw error;
     }
 }
-export { sequelize };
+import initModels from '@/models/init-models';
+// 初始化模型
+const models = initModels(sequelize);
+
+// 现在你可以使用 models 对象来访问你的模型
+const { albums, images, tokens, users } = models;
+export { sequelize,albums, images, tokens, users };
