@@ -27,10 +27,13 @@ export async function POST(req: NextRequest) {
                 }
             }
         });
-
+        const allAttributes = Object.keys(albums.getAttributes());
         // 使用 Sequelize 模型方法进行查询
         const result = await albums.findAll({
-            attributes: [[sequelize.fn('COUNT', sequelize.col('images.image_id')), 'image_count']],
+            attributes: [
+                ...allAttributes,
+                [Sequelize.literal(`(SELECT COUNT(*) FROM images WHERE images.album_id = albums.album_id)`), 'image_count']
+            ],
             include: [
                 {
                     as: 'images',
