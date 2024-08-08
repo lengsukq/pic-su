@@ -5,7 +5,7 @@ const path = require('path');
 const initModels = require('../../models/init-models'); // 引入初始化模型的函数
 
 // 加载环境变量
-const dotenvPath = path.resolve(__dirname, '../.env.local');
+const dotenvPath = path.resolve(__dirname, '../../.env.local');
 const result = dotenv.config({ path: dotenvPath });
 
 if (result.error) {
