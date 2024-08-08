@@ -20,7 +20,7 @@ const sequelize = new Sequelize(pgsqlUrl, {
         createdAt: 'created_at',
         updatedAt: 'updated_at',
         deletedAt: 'deleted_at',
-        underscored: true,
+        underscored: false,
         freezeTableName: true,
     }
 }); // Postgres 示例
