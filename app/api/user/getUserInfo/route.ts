@@ -5,7 +5,7 @@ import { verifyAuth } from "@/utils/auth/auth";
 import { users } from '@/utils/SeqDb'; // 引入 users 模型
 
 export async function POST(req: NextRequest) {
-    console.log('进入');
+    
     try {
         const { user_id: userId } = await verifyAuth(req);
 

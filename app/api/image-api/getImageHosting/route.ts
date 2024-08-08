@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server'
 import {verifyAuth} from "@/utils/auth/auth";
 import {users} from "@/utils/SeqDb";
 export async function POST(req: NextRequest) {
-    console.log('进入');
+    
     try {
         const { user_id: userId } = await verifyAuth(req);
 

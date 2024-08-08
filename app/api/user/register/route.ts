@@ -5,7 +5,7 @@ import { users } from '@/utils/SeqDb'; // 引入 users 模型
 import { Op } from 'sequelize'; // 用于 Sequelize 运算符
 
 export async function POST(req: NextRequest) {
-    console.log('进入');
+    
     try {
         const jsonData = await req.json();
         const { username, password, email } = jsonData;
