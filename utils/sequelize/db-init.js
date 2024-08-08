@@ -39,19 +39,9 @@ async function initializeDatabase() {
 
         // 初始化模型
         const models = initModels(sequelize);
-        // 定义需要同步的模型名称
-        const modelNames = ['users','albums','images','tokens' ];
-
-        // 使用循环同步所有模型
-        for (const modelName of modelNames) {
-            if (models[modelName]) {
-                await models[modelName].sync({ alter: true }); //这将检查数据库中表的当前状态(它具有哪些列,它们的数据类型等),然后在表中进行必要的更改以使其与模型匹配.
-                console.log(`Model ${modelName} has been synchronized.`);
-            } else {
-                console.error(`Model ${modelName} is not defined.`);
-            }
-        }
-
+        // 同步所有模型，优先同步users表
+        await models.users.sync({ alter: true });
+        await sequelize.sync({ force: false });
         console.log('Database & tables created!');
 
     } catch (error) {
