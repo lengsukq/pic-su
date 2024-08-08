@@ -35,6 +35,7 @@ const database = {
     schema: false,
     // 将模型输出为typescript文件
     typescript: false,
+    timestamps: 'underscored'
 };
 console.log('database',database)
 let connectShell = 'sequelize-auto';
