@@ -1,4 +1,4 @@
-import { Sequelize,DataTypes } from 'sequelize';
+import { Sequelize} from 'sequelize';
 import pg from 'pg';
 const dbConfig = {
     username: process.env.DB_USER,   // 用户名
