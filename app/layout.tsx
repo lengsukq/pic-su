@@ -4,7 +4,6 @@ import "./globals.css";
 import "@/style/antd.scss"
 import React from "react";
 import MenuContainer from "./index"
-
 const inter = Inter({subsets: ["latin"]});
 // 引入antd组件 https://ant-design.antgroup.com/docs/blog/why-not-static-cn
 import {ConfigProvider, App} from 'antd';
