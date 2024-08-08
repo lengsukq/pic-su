@@ -19,7 +19,7 @@ const dbConfig = {
     host: env.DB_HOST,      // 数据库服务器IP
     password: env.DB_PASSWORD,     // 数据库密码
     database: env.DB_NAME,      // 数据库名
-    port: process.env.DB_PORT || 5432,    // 数据库端口，默认为5432
+    port: env.DB_PORT || 5432,    // 数据库端口，默认为5432
 };
 
 console.log('Database configuration:', dbConfig);
