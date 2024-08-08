@@ -15,11 +15,11 @@ if (result.error) {
 const env = result.parsed;
 
 const dbConfig = {
-    username: env.DB_USER,   // 用户名
-    host: env.DB_HOST,      // 数据库服务器IP
-    password: env.DB_PASSWORD,     // 数据库密码
-    database: env.DB_NAME,      // 数据库名
-    port: env.DB_PORT || 5432,    // 数据库端口，默认为5432
+    username: env.DB_USER || process.env.DB_USER,   // 用户名
+    host: env.DB_HOST || process.env.DB_HOST,      // 数据库服务器IP
+    password: env.DB_PASSWORD || process.env.DB_PASSWORD,     // 数据库密码
+    database: env.DB_NAME || process.env.DB_NAME,      // 数据库名
+    port: process.env.DB_PORT || env.DB_PORT || 5432,    // 数据库端口，默认为5432
 };
 
 console.log('Database configuration:', dbConfig);
