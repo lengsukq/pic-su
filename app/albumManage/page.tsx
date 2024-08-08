@@ -19,7 +19,7 @@ interface Item {
     description: string;
     album_id: string;
     cover_image_url: string | null,
-    createdAt: string,
+    created_at: string,
     updated_at: string,
     album_cover: string,
 }
@@ -109,7 +109,7 @@ const Page: React.FC = () => {
                         <Card onClick={() => checkPics(item)}
                             // style={{width: 300, marginBottom: 20}}
                               cover={
-                                  <Image alt={item.createdAt} src={item.album_cover} className={'object-cover'}
+                                  <Image alt={item.created_at} src={item.album_cover} className={'object-cover'}
                                          height={120}/>
                               }
                               actions={[
@@ -120,7 +120,7 @@ const Page: React.FC = () => {
                         >
                             <Meta
                                 avatar={
-                                    <Statistic title={convertDateFormat(item.createdAt)} value={item.image_count}
+                                    <Statistic title={convertDateFormat(item.created_at)} value={item.image_count}
                                                valueStyle={{fontSize: '16px'}} suffix="/无限" prefix={<></>}/>
                                 }
                                 title={item.album_name} // 使用列表项的数据
