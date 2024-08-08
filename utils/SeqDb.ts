@@ -16,7 +16,8 @@ const sequelize = new Sequelize(pgsqlUrl, {
     dialect: 'postgres',
     dialectModule: pg,
     define: {
-        underscored: true
+        underscored: true,
+        freezeTableName: true,
     }
 }); // Postgres 示例
 

@@ -7,13 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "model": "node ./utils/sequelize-model.ts"
+    "model": "node utils/sequelizeModel.js"
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.0",
     "@ant-design/pro-components": "^2.7.1",
     "@emotion/css": "^11.11.2",
     "antd": "^5.17.0",
+    "dotenv": "^16.4.5",
     "jose": "^5.2.4",
     "next": "^14.1.4",
     "pg": "^8.12.0",
