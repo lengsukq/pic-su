@@ -66,6 +66,9 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'tokens',
     schema: 'public',
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
     indexes: [
       {
         name: "token_id",

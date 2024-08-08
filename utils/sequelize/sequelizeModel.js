@@ -22,7 +22,7 @@ const database = {
     // 数据库类型：postgres, mysql, sqlite
     dialect: 'postgres',
     // 包含在model的配置参数中define的模型定义的JSON文件路径
-    additional: '',
+    additional: 'utils/sequelize/additional.json',
     // 表名,多个表名逗号分隔
     tables: '',
     // 要跳过的表名，多个表名逗号分隔
@@ -35,7 +35,7 @@ const database = {
     schema: false,
     // 将模型输出为typescript文件
     typescript: false,
-    timestamps: 'underscored'
+    timestamps: 'true',
 };
 console.log('database',database)
 let connectShell = 'sequelize-auto';

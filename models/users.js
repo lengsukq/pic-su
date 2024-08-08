@@ -53,6 +53,9 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'users',
     schema: 'public',
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
     indexes: [
       {
         name: "users_email_key",

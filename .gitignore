@@ -38,3 +38,6 @@ next-env.d.ts
 # locak
 *.lock
 /.idea/
+
+# proxy
+.yarnrc

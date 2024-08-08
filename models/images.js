@@ -56,6 +56,9 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'images',
     schema: 'public',
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at',
     indexes: [
       {
         name: "images_pkey",
