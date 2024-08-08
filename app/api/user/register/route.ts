@@ -1,29 +1,43 @@
 'use server'
 import BizResult from '@/utils/BizResult';
-import {query} from "@/utils/db";
-import { NextRequest } from 'next/server'
-export async function POST(req:NextRequest) {
-    console.log('进入')
+import { NextRequest } from 'next/server';
+import { users } from '@/utils/SeqDb'; // 引入 users 模型
+import { Op } from 'sequelize'; // 用于 Sequelize 运算符
+
+export async function POST(req: NextRequest) {
+    console.log('进入');
     try {
         const jsonData = await req.json();
-        const {username, password, email} = jsonData;
+        const { username, password, email } = jsonData;
+
         // 参数有效性检查
         if (!username || !password || !email) {
-            // 参数不完整
             return BizResult.validateFailed('', '参数不完整');
         }
-        // 创建用户
+
         // 检查用户名或邮箱是否已被占用
-        const existingUser = await query('SELECT user_id FROM users WHERE username = $1 OR email = $2', [username, email]);
-        // !是非空断言
-        if (existingUser.rowCount !> 0) {
+        const existingUser = await users.findOne({
+            where: {
+                [Op.or]: [
+                    { username: username },
+                    { email: email }
+                ]
+            }
+        });
+
+        if (existingUser) {
             // 用户名或邮箱已存在
-            return BizResult.fail('', '户名或邮箱已被占用');
+            return BizResult.fail('', '用户名或邮箱已被占用');
         }
-        const result = await query(
-            'INSERT INTO users(username, password, email, created_at, updated_at) VALUES($1, $2, $3, NOW(), NOW()) RETURNING user_id',
-            [username, password, email]
-        );
+
+        // 创建用户
+        await users.create({
+            username: username,
+            password: password, // 明文密码存储
+            email: email,
+            created_at: new Date(),
+            updated_at: new Date()
+        });
 
         return BizResult.success('', '创建账号成功');
     } catch (error) {

@@ -37,7 +37,7 @@ const UserInfo: React.FC<{
             onFinish={async (values) => {
                 editUserInfo(values).then(res=>{
                     if(res.code === 200){
-                        message.success('用户信息编辑成功');
+                        message.success(res.msg);
                         return true;
                     }
                 })

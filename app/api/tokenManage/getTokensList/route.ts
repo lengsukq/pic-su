@@ -2,7 +2,7 @@
 import BizResult from '@/utils/BizResult';
 import { NextRequest } from 'next/server';
 import { verifyAuth } from "@/utils/auth/auth";
-import { tokens } from '@/utils/SeqDb'; // 假设你已经定义好了 Sequelize 的 Token 模型
+import { tokens } from '@/utils/SeqDb';
 import { Op } from 'sequelize';
 
 export async function POST(req: NextRequest) {
