@@ -4,23 +4,35 @@ const pg = require("pg");
 const path = require('path');
 const initModels = require('../../models/init-models'); // 引入初始化模型的函数
 
-// 加载环境变量
-const dotenvPath = path.resolve(__dirname, '../../.env.local');
-const result = dotenv.config({ path: dotenvPath });
+let dbConfig;
+try {
+    // 加载环境变量
+    const dotenvPath = path.resolve(__dirname, '../../.env.local');
+    const result = dotenv.config({ path: dotenvPath });
 
-if (result.error) {
-    throw result.error;
+    if (result.error) {
+        throw result.error;
+    }
+
+    const env = result.parsed;
+    dbConfig = {
+        username: env.DB_USER ,   // 用户名
+        host: env.DB_HOST ,      // 数据库服务器IP
+        password: env.DB_PASSWORD ,     // 数据库密码
+        database: env.DB_NAME ,      // 数据库名
+        port: env.DB_PORT || 5432,    // 数据库端口，默认为5432
+    };
+}catch (e){
+    dbConfig = {
+        username:  process.env.DB_USER,   // 用户名
+        host: process.env.DB_HOST,      // 数据库服务器IP
+        password: process.env.DB_PASSWORD,     // 数据库密码
+        database: process.env.DB_NAME,      // 数据库名
+        port: process.env.DB_PORT || 5432,    // 数据库端口，默认为5432
+    };
 }
 
-const env = result.parsed;
 
-const dbConfig = {
-    username: env.DB_USER || process.env.DB_USER,   // 用户名
-    host: env.DB_HOST || process.env.DB_HOST,      // 数据库服务器IP
-    password: env.DB_PASSWORD || process.env.DB_PASSWORD,     // 数据库密码
-    database: env.DB_NAME || process.env.DB_NAME,      // 数据库名
-    port: process.env.DB_PORT || env.DB_PORT || 5432,    // 数据库端口，默认为5432
-};
 
 console.log('Database configuration:', dbConfig);
 
