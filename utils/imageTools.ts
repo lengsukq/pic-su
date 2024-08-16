@@ -1,4 +1,5 @@
 import { UserJwtPayload } from "@/utils/auth/auth";
+import {randomImages} from "@/utils/third-party-tools";
 
 // 定义文件数据的接口
 interface FileData {
@@ -54,7 +55,7 @@ async function upImgBySM({ file }: FileData) {
         "Authorization": userInfoApi.SM_TOKEN,
     });
 
-    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查SM图床Token是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
+    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查SM图床Token是否有效', url: await randomImages() };
 }
 
 // 上传图片到哔哩哔哩动态/专栏
@@ -68,7 +69,7 @@ async function upImgByBilibiliDaily({ file }: FileData) {
         "cookie": `SESSDATA=${userInfoApi.BILIBILI_SESSDATA}`,
     });
 
-    return data ? { msg: '上传成功', url: data.data.image_url } : { msg: '上传失败，请检查哔哩哔哩动态/专栏图片参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
+    return data ? { msg: '上传成功', url: data.data.image_url } : { msg: '上传失败，请检查哔哩哔哩动态/专栏图片参数是否有效', url: await randomImages() };
 }
 
 // 上传图片到哔哩哔哩视频封面
@@ -81,7 +82,7 @@ async function upImgByBilibiliCover({ base64 }: FileData) {
         "cookie": `SESSDATA=${userInfoApi.BILIBILI_SESSDATA}`,
     });
 
-    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查哔哩哔哩视频封面参数是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
+    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查哔哩哔哩视频封面参数是否有效', url: await randomImages() };
 }
 
 // 上传到imgBB图床
@@ -92,7 +93,7 @@ async function upImgByImgBB({ file }: FileData) {
 
     const data = await fetchUpload('https://api.imgbb.com/1/upload', formData);
 
-    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查imgBB图床API是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
+    return data ? { msg: '上传成功', url: data.data.url } : { msg: '上传失败，请检查imgBB图床API是否有效', url: await randomImages() };
 }
 
 // 上传图片到Telegraph图床
@@ -107,5 +108,5 @@ async function upImgByTelegraph({ file }: FileData) {
 
     const data = await fetchUpload(`${proxyUrl}https://telegra.ph/upload`, formData);
 
-    return data ? { msg: '上传成功', url: `${proxyUrl}https://telegra.ph/${data[0].src}` } : { msg: '上传失败，请检查Telegraph图床URL是否有效', url: 'https://s2.loli.net/2024/01/08/ek3fUIuh6gPR47G.jpg' };
+    return data ? { msg: '上传成功', url: `${proxyUrl}https://telegra.ph/${data[0].src}` } : { msg: '上传失败，请检查Telegraph图床URL是否有效', url: await randomImages() };
 }
