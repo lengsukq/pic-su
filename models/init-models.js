@@ -18,6 +18,8 @@ function initModels(sequelize) {
   users.hasMany(albums, { as: "albums", foreignKey: "user_id"});
   images.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(images, { as: "images", foreignKey: "user_id"});
+  imghosting.belongsTo(users, { as: "user", foreignKey: "user_id"});
+  users.hasMany(imghosting, { as: "imghostings", foreignKey: "user_id"});
   tokens.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(tokens, { as: "tokens", foreignKey: "user_id"});
 
