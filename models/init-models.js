@@ -1,12 +1,14 @@
 var DataTypes = require("sequelize").DataTypes;
 var _albums = require("./albums");
 var _images = require("./images");
+var _imghosting = require("./imghosting");
 var _tokens = require("./tokens");
 var _users = require("./users");
 
 function initModels(sequelize) {
   var albums = _albums(sequelize, DataTypes);
   var images = _images(sequelize, DataTypes);
+  var imghosting = _imghosting(sequelize, DataTypes);
   var tokens = _tokens(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
 
@@ -22,6 +24,7 @@ function initModels(sequelize) {
   return {
     albums,
     images,
+    imghosting,
     tokens,
     users,
   };
